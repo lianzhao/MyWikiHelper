@@ -6,8 +6,6 @@
   "version": "0.0.1",
   "author": "lianzhao",
   "homepage_url": "https://github.com/lianzhao/MyWikiHelper",
-
-  "background": { "scripts": ["lib/jquery-2.1.3.min.js", "background.js"] },
   
   "icons": { "16": "resources/icon.ico",
            "48": "resources/icon.ico",
@@ -16,11 +14,15 @@
   "permissions": [
     "tabs",
     "activeTab",
-    "http://*.huiji.wiki/"
+    "http://*.wikipedia.com/",
+    "https://*.wikipedia.com/",
+    "http://*.huiji.wiki/",
+    "http://*.wikia.com/"
   ],
 
   "browser_action": {
     "default_title": "My wiki helper",
-    "default_icon": "resources/icon.ico"
+    "default_icon": "resources/icon.ico",
+    "default_popup": "popup.html"
   }
 }
