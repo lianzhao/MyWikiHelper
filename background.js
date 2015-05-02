@@ -9,12 +9,6 @@ function getFirstChildInObject(obj) {
   }
 }
 
-function getMediaWikiTimestamp(date){
-  console.log("" + date.toISOString());
-  return date.toISOString();
-  //return "" + date.getUTCFullYear()+ (date.getUTCMonth() + 1) + date.getUTCDate() + date.getUTCHours() + date.getUTCMinutes() + date.getUTCSeconds();
-}
-
 function port(tab){
 var TARGET_WIKI_API_URL_BASE = "http://lotr.huiji.wiki/api.php";
   var tempIndex = tab.url.indexOf("/wiki/");
@@ -37,12 +31,9 @@ var TARGET_WIKI_API_URL_BASE = "http://lotr.huiji.wiki/api.php";
       url: TARGET_WIKI_API_URL_BASE + "?action=query&meta=tokens&format=json",
     }).done(function(tokensParam){
       console.log(tokensParam);
-      var timestamp = getMediaWikiTimestamp(new Date());
-      console.log(timestamp);
       var token = tokensParam.query.tokens.csrftoken;
       console.log(token);
-      var editRequestUrl = TARGET_WIKI_API_URL_BASE + "?action=edit&format=json&summary=port&title=" + title + "&starttimestamp=" + timestamp;
-      //var editRequestUrl = "http://lotr.huiji.wiki/api.php?action=edit&title=Test&summary=test%20summary&text=article%20content&basetimestamp=20070824123454";
+      var editRequestUrl = TARGET_WIKI_API_URL_BASE + "?action=edit&format=json&createonly&summary=port&title=" + title;
       var postBody = {
         "token" : token,
         "text" : wikitext
