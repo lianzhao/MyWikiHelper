@@ -48,9 +48,10 @@ $(document).ready(function () {
           var token = tokensParam.query.tokens.csrftoken;
           console.log(token);
           var editRequestUrl = TARGET_WIKI_API_URL + "?action=edit&format=json&createonly&summary=port&title=" + title;
+          var postWikitext = getWikiTextPrefix(url) + wikitext;
           var postBody = {
             "token" : token,
-            "text" : wikitext
+            "text" : postWikitext
           };
           console.log(editRequestUrl);
           $.ajax({
