@@ -1,3 +1,4 @@
+/// <reference path="typings/jquery/jquery.d.ts"/>
 function getCurrentTabUrl(callback) {
   var queryInfo = {
     active: true,
