@@ -33,7 +33,7 @@ $(document).ready(function () {
       var title = url.substring(tempIndex + 6);
       $("#navBtn").click(function () {
         chrome.tabs.create({ url: TARGET_WIKI_URL + "/wiki/" + title});
-      })
+      });
       var requestUrl = url.replace("/wiki/", "/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=");
       $.ajax({
         url: requestUrl
