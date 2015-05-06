@@ -11,44 +11,56 @@ function getCurrentTabUrl(callback) {
   });
 }
 
+function handleAjaxError(jqXHR, textStatus, errorThrown) {
+  console.log(jqXHR);
+  console.log(textStatus);
+  console.log(errorThrown);
+  $("#msgText").text("error, see log.");
+  $("#msgText").show();
+  $("#loadingImg").hide();
+}
+
 $(document).ready(function () {
   $("#navBtn").hide();
   getCurrentTabUrl(function (url) {
-    var tempIndex = url.indexOf("/wiki/");
-    if (tempIndex < 0){
+    var sourceSite = getSourceWiki(url);
+    if (sourceSite === null){
+      
       $("#msgText").text("Not a valid wiki page.");
       $("#portBtn").hide();
       $("#loadingImg").hide();
       return;
     }
+    
+    var targetSite = WIKI_SITES[0];//todo
+    var title = url.substring(sourceSite.page_url.length);
     $("#msgText").text();
     $("#portBtn").show();
-    $("#portBtn").text("Port to " + TARGET_WIKI_URL);
+    $("#portBtn").text("Port " + title + " to " + targetSite.name);
     $("#loadingImg").hide();
     
     $("#portBtn").click(function () {
       $("#loadingImg").show();
-      $("#portBtn").hide();
+      $("#portBtn").hide();      
       
-      var title = url.substring(tempIndex + 6);
       $("#navBtn").click(function () {
-        chrome.tabs.create({ url: TARGET_WIKI_URL + "/wiki/" + title});
+        chrome.tabs.create({ url: targetSite.page_url + title});
       });
-      var requestUrl = url.replace("/wiki/", "/api.php?action=query&prop=revisions&rvprop=content&format=json&titles=");
+      var getWikiTextRequestUrl = sourceSite.api_url + "?action=query&prop=revisions&rvprop=content&format=json&titles=" + title;
       $.ajax({
-        url: requestUrl
-      }).done(function (params) {
-        var pagesNode = params.query.pages;
+        url: getWikiTextRequestUrl
+      }).done(function (wikiTextParams) {
+        var pagesNode = wikiTextParams.query.pages;
         var pageNode = getFirstChildInObject(pagesNode);
         var wikitext = getFirstChildInObject(pageNode.revisions[0]);
         console.log(wikitext);
         $.ajax({
-          url: TARGET_WIKI_API_URL + "?action=query&meta=tokens&format=json",
+          url: targetSite.api_url + "?action=query&meta=tokens&format=json",
         }).done(function(tokensParam){
           console.log(tokensParam);
           var token = tokensParam.query.tokens.csrftoken;
           console.log(token);
-          var editRequestUrl = TARGET_WIKI_API_URL + "?action=edit&format=json&createonly&summary=port&title=" + title;
+          var editRequestUrl = targetSite.api_url + "?action=edit&format=json&createonly&summary=port&title=" + title;
           var postWikitext = getWikiTextPrefix(url) + wikitext;
           var postBody = {
             "token" : token,
@@ -65,16 +77,9 @@ $(document).ready(function () {
             $("#msgText").show();
             $("#navBtn").show();
             $("#loadingImg").hide();
-          }).error(function( jqXHR, textStatus, errorThrown){
-            console.log(jqXHR);
-            console.log(textStatus);
-            console.log(errorThrown);
-            $("#msgText").text("error, see log.");
-            $("#msgText").show();
-            $("#loadingImg").hide();
-          });
-        });
-      });
+          }).error(handleAjaxError);
+        }).error(handleAjaxError);;
+      }).error(handleAjaxError);;
     });
   });
 });

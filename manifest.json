@@ -17,7 +17,8 @@
     "http://*.wikipedia.com/",
     "https://*.wikipedia.com/",
     "http://*.huiji.wiki/",
-    "http://*.wikia.com/"
+    "http://*.wikia.com/",
+    "http://www.tolkiengateway.net/"
   ],
 
   "browser_action": {
