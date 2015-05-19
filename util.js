@@ -12,6 +12,13 @@ function getFirstChildInObject(obj) {
 
 var WIKI_SITES = [
   {
+    name : "逆境无赖维基",
+    desc : "逆境无赖维基",
+    url : "http://kaiji.huiji.wiki",
+    page_url : "http://kaiji.huiji.wiki/wiki/",
+    api_url : "http://kaiji.huiji.wiki/api.php",
+  },
+  {
     name : "魔戒中文维基",
     desc : "魔戒中文维基",
     url : "http://lotr.huiji.wiki",
@@ -24,6 +31,13 @@ var WIKI_SITES = [
     url : "http://www.tolkiengateway.net",
     page_url : "http://www.tolkiengateway.net/wiki/",
     api_url : "http://www.tolkiengateway.net/w/api.php",
+  },
+  {
+    name : "日文维基百科",
+    desc : "日文维基百科",
+    url : "http://ja.wikipedia.org",
+    page_url : "http://ja.wikipedia.org/wiki/",
+    api_url : "http://ja.wikipedia.org/w/api.php",
   },
 //  {
 //    name : "",
