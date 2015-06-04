@@ -22,7 +22,9 @@ module Wiki {
 		parsePage(source_url: string): WikiPage {
 			var index = source_url.indexOf(this.page_url);
 			if (index === 0) {
-				var title = source_url.substr(this.page_url.length).replace(this.project_name + ":", "Project:");
+				var encodedTitle = source_url.substr(this.page_url.length);
+				var title = decodeURIComponent(encodedTitle);
+				title = title.replace(this.project_name + ":", "Project:");
 				var page = new WikiPage(title, this);
 				return page;
 			}
