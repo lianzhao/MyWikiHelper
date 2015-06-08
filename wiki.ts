@@ -204,52 +204,42 @@ module Wiki {
 					var postBody = pbb.toString();
 					var contentType = "multipart/form-data; boundary=" + boundary;
 
-					console.log(postBody);
-					console.log(contentType);
-					var xhr = new XMLHttpRequest();
-					xhr.open("POST", requestUrl, true);
-					xhr.setRequestHeader("Content-Type", contentType);
-					xhr.onreadystatechange = () => {
-						if (xhr.readyState === 4) {
-							// 4 = "loaded"
-							console.log(xhr);
-							if (xhr.status === 200) {
-								deferredResult.resolve(xhr);
-							}
-							else {
-								deferredResult.reject({ message: xhr.statusText });
-							}
-						}
-					};
-					xhr.send(postBody);
+//					console.log(postBody);
+//					console.log(contentType);
+//					var xhr = new XMLHttpRequest();
+//					xhr.open("POST", requestUrl, true);
+//					xhr.setRequestHeader("Content-Type", contentType);
+//					xhr.onreadystatechange = () => {
+//						if (xhr.readyState === 4) {
+//							// 4 = "loaded"
+//							console.log(xhr);
+//							if (xhr.status === 200) {
+//								deferredResult.resolve(xhr);
+//							}
+//							else {
+//								deferredResult.reject({ message: xhr.statusText });
+//							}
+//						}
+//					};
+//					xhr.send(postBody);
 
 					//console.log(postBody);
-					//					$.ajax({
-					//						url: requestUrl,
-					//						type: "POST",
-					//						data: postBody,
-					//						//async: false,
-					//						//contentType: "multipart/form-data; boundary=" + boundary,
-					//						//						headers: {
-					//						//							"content-type": "multipart/form-data; boundary=" + boundary
-					//						//						},
-					//						//contentType: false,
-					//						contentType: contentType,
-					//						processData: false,
-					//						beforeSend: (xhr,settings)=>{
-					//							console.log(xhr);
-					//							console.log(settings);
-					//						},
-					//						success: params1 => {
-					//							console.log(params1);
-					//							deferredResult.resolve(params1);
-					//						},
-					//						error: (e, msg) => {
-					//							console.log(e);
-					//							console.log(msg);
-					//							deferredResult.reject({ message: msg });
-					//						}
-					//					})
+					$.ajax({
+						url: requestUrl,
+						type: "POST",
+						data: postBody,
+						contentType: contentType,
+						processData: false,
+						success: params1 => {
+							console.log(params1);
+							deferredResult.resolve(params1);
+						},
+						error: (e, msg) => {
+							console.log(e);
+							console.log(msg);
+							deferredResult.reject({ message: msg });
+						}
+					})
 				},
 				error: (e, msg) => {
 					console.log(e);
