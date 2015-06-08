@@ -196,10 +196,11 @@ module Wiki {
 						//"comment": "port",
 						"token": token
 					}
-					var boundary = "-----------------------------8ce5ac3ab79ab2c";// todo random
+					var boundary = "---------------------------8ce5ac3ab79ab2c";// todo random
+					//var boundary = '--nodemw' + Math.random().toString().substr(2);
 					var pbb = new PostBodyBuilder(boundary);
 					pbb.appendObject(requestPara);
-					//pbb.appendFile("file", this.file_name, params);
+					pbb.appendFile("file", this.file_name, params);
 					var postBody = pbb.toString();
 					var contentType = "multipart/form-data; boundary=" + boundary;
 
@@ -287,10 +288,10 @@ module Wiki {
 	class PostBodyBuilder {
 		private CRLF = "\r\n";
 		private _buffer: string;
-		private _boundary: string;
+		private _boundaryPlus: string;
 
 		constructor(boundary: string) {
-			this._boundary = boundary;
+			this._boundaryPlus = "--" + boundary;
 			this._buffer = "";
 		}
 
@@ -304,7 +305,7 @@ module Wiki {
 		}
 
 		appendString(key: string, value: string): PostBodyBuilder {
-			this._buffer += this._boundary + this.CRLF;
+			this._buffer += this._boundaryPlus + this.CRLF;
 			this._buffer += "Content-Disposition: form-data; name=\"" + key + "\"" + this.CRLF;
 			this._buffer += "Content-Type: text/plain; charset=UTF-8" + this.CRLF;
 			this._buffer += "Content-Transfer-Encoding: 8bit" + this.CRLF;
@@ -314,7 +315,7 @@ module Wiki {
 		}
 
 		appendFile(key: string, file_name: string, content: any): PostBodyBuilder {
-			this._buffer += this._boundary + this.CRLF;
+			this._buffer += this._boundaryPlus + this.CRLF;
 			this._buffer += "Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + file_name + "\"" + this.CRLF;
 			this._buffer += "Content-Type: application/octet-stream; charset=UTF-8" + this.CRLF;
 			this._buffer += "Content-Transfer-Encoding: binary" + this.CRLF;
@@ -324,7 +325,7 @@ module Wiki {
 		}
 
 		toString(): string {
-			this._buffer += this._boundary + "--";
+			this._buffer += this._boundaryPlus + "--";
 			return this._buffer;
 		}
 	}
