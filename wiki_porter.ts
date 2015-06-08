@@ -66,6 +66,9 @@ module WikiPorter {
 			this.default_wiki_text_mapping_func = (wikiText, sourcePage) => {
 				return "'''这个页面由[https://github.com/lianzhao/MyWikiHelper Wiki Porter]自动搬运。搬运中产生的版权问题由搬运者自行解决，Wiki Porter不为此搬运行为背书。您可以前往[" + sourcePage.url + " 源地址]查看版权声明。'''[[Category:WikiPorter搬运]]<br>" + wikiText;
 			}
+			var filePorter = new FilePorter();
+			filePorter.wiki_text_mapping_func = this.default_wiki_text_mapping_func;
+			this.registerPorter(filePorter);
 			var defaultPorter = new DefaultPorter();
 			defaultPorter.wiki_text_mapping_func = this.default_wiki_text_mapping_func;
 			this.registerPorter(defaultPorter);
@@ -84,12 +87,12 @@ module WikiPorter {
 			}
 			return null;
 		}
-		
-		static parsePage(source: string): Wiki.WikiPage{
+
+		static parsePage(source: string): Wiki.WikiPage {
 			for (var index = 0; index < this.wiki_sites.length; index++) {
 				var site = this.wiki_sites[index];
 				var page = site.parsePage(source);
-				if (page !== null){
+				if (page !== null) {
 					return page;
 				}
 			}
@@ -118,6 +121,35 @@ module WikiPorter {
 						wikitext = this.wiki_text_mapping_func(wikitext, sourcePage, targetPage);
 					}
 					targetPage.edit(wikitext, token).done(_ => deferredResult.resolve(_)).fail(deferredResult.reject);
+				}).fail(deferredResult.reject);
+			}).fail(deferredResult.reject);
+			return deferredResult.promise();
+		}
+	}
+
+	export class FilePorter extends DefaultPorter {
+
+		canPort(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage): boolean {
+			return super.canPort(sourcePage, targetPage)
+				&& sourcePage.isFilePage && targetPage.isFilePage;
+		}
+
+		port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage): P.Promise<any> {
+			var deferredResult = P.defer<any>();
+			var sourceFilePage = sourcePage.asFilePage();
+			var targetFilePage = targetPage.asFilePage();
+			if (sourceFilePage == null || targetFilePage == null) {
+				// something went wrong...
+				return;
+			}
+			sourcePage.getWikiText().done(wikitext=> {
+				sourceFilePage.getFileUrl().done(url => {
+					targetPage.site.getCsrfToken().done(token=> {
+						if (this.wiki_text_mapping_func != null) {
+							wikitext = this.wiki_text_mapping_func(wikitext, sourcePage, targetPage);
+						}
+						targetFilePage.upload(url, wikitext, token).done(_ => deferredResult.resolve(_)).fail(deferredResult.reject);
+					}).fail(deferredResult.reject);
 				}).fail(deferredResult.reject);
 			}).fail(deferredResult.reject);
 			return deferredResult.promise();

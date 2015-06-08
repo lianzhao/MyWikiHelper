@@ -321,8 +321,23 @@ var P;
     }
     P.isUndefined = isUndefined;
 })(P || (P = {}));
+function str2ab(str) {
+    var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+    var bufView = new Uint16Array(buf);
+    for (var i = 0, strLen = str.length; i < strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
+    }
+    return buf;
+}
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
 /// <reference path="typings/jquery/jquery.d.ts"/>
 /// <reference path="typings/Promise.ts"/>
+/// <reference path="util.ts"/>
 var Wiki;
 (function (Wiki) {
     var WikiSite = (function () {
@@ -368,6 +383,14 @@ var Wiki;
         function WikiPage(title, site) {
             this._title = title;
             this._site = site;
+            var index = title.indexOf(":");
+            if (index > 0) {
+                this._ns = title.substr(0, index);
+                this._title_without_ns = title.substr(index + 1);
+            }
+            else {
+                this._title_without_ns = title;
+            }
         }
         Object.defineProperty(WikiPage.prototype, "title", {
             get: function () {
@@ -386,6 +409,27 @@ var Wiki;
         Object.defineProperty(WikiPage.prototype, "url", {
             get: function () {
                 return this._site.page_url + this.title;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(WikiPage.prototype, "ns", {
+            get: function () {
+                return this._ns;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(WikiPage.prototype, "title_without_ns", {
+            get: function () {
+                return this._title_without_ns;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(WikiPage.prototype, "isFilePage", {
+            get: function () {
+                return this._ns === "File" || this._ns === "文件"; //todo
             },
             enumerable: true,
             configurable: true
@@ -429,6 +473,9 @@ var Wiki;
             });
             return deferredResult.promise();
         };
+        WikiPage.prototype.asFilePage = function () {
+            return this.isFilePage ? new WikiFilePage(this._title, this._site) : null;
+        };
         WikiPage.prototype.getFirstChildInObject = function (obj) {
             for (var key in obj) {
                 if (obj.hasOwnProperty(key)) {
@@ -446,6 +493,175 @@ var Wiki;
         return WikiPage;
     })();
     Wiki.WikiPage = WikiPage;
+    var WikiFilePage = (function (_super) {
+        __extends(WikiFilePage, _super);
+        function WikiFilePage(title, site) {
+            _super.call(this, title, site);
+        }
+        Object.defineProperty(WikiFilePage.prototype, "file_name", {
+            get: function () {
+                return this.title_without_ns;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        WikiFilePage.prototype.getFileUrl = function () {
+            var _this = this;
+            var deferredResult = P.defer();
+            var requestUrl = this.site.api_url + "?action=query&prop=imageinfo&iiprop=url&format=json&titles=" + this.title;
+            console.log(requestUrl);
+            $.ajax({
+                url: requestUrl,
+                success: function (params) {
+                    console.log(params);
+                    var pagesNode = params.query.pages;
+                    var pageNode = _this.getFirstChildInObject(pagesNode);
+                    deferredResult.resolve(pageNode.imageinfo[0].url);
+                },
+                error: function (e, msg) {
+                    deferredResult.reject({ message: msg });
+                }
+            });
+            return deferredResult.promise();
+        };
+        WikiFilePage.prototype.upload = function (file_url, wiki_text, token) {
+            var _this = this;
+            var deferredResult = P.defer();
+            // upload by url is not supported by default, so download the image first...
+            $.ajax({
+                url: file_url,
+                success: function (params) {
+                    console.log(params);
+                    var requestUrl = _this.site.api_url + "?action=upload";
+                    console.log(requestUrl);
+                    var requestPara = {
+                        "filename": _this.file_name,
+                        //"comment": "port",
+                        "token": token
+                    };
+                    var boundary = "-----------------------------8ce5ac3ab79ab2c"; // todo random
+                    var pbb = new PostBodyBuilder(boundary);
+                    pbb.appendObject(requestPara);
+                    //pbb.appendFile("file", this.file_name, params);
+                    var postBody = pbb.toString();
+                    var contentType = "multipart/form-data; boundary=" + boundary;
+                    console.log(postBody);
+                    console.log(contentType);
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", requestUrl, true);
+                    xhr.setRequestHeader("Content-Type", contentType);
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4) {
+                            // 4 = "loaded"
+                            console.log(xhr);
+                            if (xhr.status === 200) {
+                                deferredResult.resolve(xhr);
+                            }
+                            else {
+                                deferredResult.reject({ message: xhr.statusText });
+                            }
+                        }
+                    };
+                    xhr.send(postBody);
+                    //console.log(postBody);
+                    //					$.ajax({
+                    //						url: requestUrl,
+                    //						type: "POST",
+                    //						data: postBody,
+                    //						//async: false,
+                    //						//contentType: "multipart/form-data; boundary=" + boundary,
+                    //						//						headers: {
+                    //						//							"content-type": "multipart/form-data; boundary=" + boundary
+                    //						//						},
+                    //						//contentType: false,
+                    //						contentType: contentType,
+                    //						processData: false,
+                    //						beforeSend: (xhr,settings)=>{
+                    //							console.log(xhr);
+                    //							console.log(settings);
+                    //						},
+                    //						success: params1 => {
+                    //							console.log(params1);
+                    //							deferredResult.resolve(params1);
+                    //						},
+                    //						error: (e, msg) => {
+                    //							console.log(e);
+                    //							console.log(msg);
+                    //							deferredResult.reject({ message: msg });
+                    //						}
+                    //					})
+                },
+                error: function (e, msg) {
+                    console.log(e);
+                    console.log(msg);
+                    deferredResult.reject({ message: msg });
+                }
+            });
+            //			var requestUrl = this.site.api_url + "?action=upload&url=" + file_url + "&filename=" + this.file_name + "&comment=port";
+            //			console.log(requestUrl);
+            //			console.log(this.file_name);
+            //			console.log(file_url);
+            //			$.ajax({
+            //				url: requestUrl,
+            //				data: {
+            //					//"filename": this.file_name,
+            //					//"url": file_url,
+            //					//"comment": "port",
+            //					"text": wiki_text,
+            //					"token": token
+            //				},
+            //				success: params => {
+            //					deferredResult.resolve(params);
+            //				},
+            //				error: (e, msg) => {
+            //					console.log(e);
+            //					console.log(msg);
+            //					deferredResult.reject({ message: msg });
+            //				}
+            //			})
+            return deferredResult.promise();
+        };
+        return WikiFilePage;
+    })(WikiPage);
+    Wiki.WikiFilePage = WikiFilePage;
+    var PostBodyBuilder = (function () {
+        function PostBodyBuilder(boundary) {
+            this.CRLF = "\r\n";
+            this._boundary = boundary;
+            this._buffer = "";
+        }
+        PostBodyBuilder.prototype.appendObject = function (obj) {
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    this.appendString(key, "" + obj[key]);
+                }
+            }
+            return this;
+        };
+        PostBodyBuilder.prototype.appendString = function (key, value) {
+            this._buffer += this._boundary + this.CRLF;
+            this._buffer += "Content-Disposition: form-data; name=\"" + key + "\"" + this.CRLF;
+            this._buffer += "Content-Type: text/plain; charset=UTF-8" + this.CRLF;
+            this._buffer += "Content-Transfer-Encoding: 8bit" + this.CRLF;
+            this._buffer += this.CRLF;
+            this._buffer += value + this.CRLF;
+            return this;
+        };
+        PostBodyBuilder.prototype.appendFile = function (key, file_name, content) {
+            this._buffer += this._boundary + this.CRLF;
+            this._buffer += "Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + file_name + "\"" + this.CRLF;
+            this._buffer += "Content-Type: application/octet-stream; charset=UTF-8" + this.CRLF;
+            this._buffer += "Content-Transfer-Encoding: binary" + this.CRLF;
+            this._buffer += this.CRLF;
+            this._buffer += content + this.CRLF;
+            return this;
+        };
+        PostBodyBuilder.prototype.toString = function () {
+            this._buffer += this._boundary + "--";
+            return this._buffer;
+        };
+        return PostBodyBuilder;
+    })();
 })(Wiki || (Wiki = {}));
 /// <reference path="wiki.ts"/>
 var WikiPorter;
@@ -491,6 +707,9 @@ var WikiPorter;
             this.default_wiki_text_mapping_func = function (wikiText, sourcePage) {
                 return "'''这个页面由[https://github.com/lianzhao/MyWikiHelper Wiki Porter]自动搬运。搬运中产生的版权问题由搬运者自行解决，Wiki Porter不为此搬运行为背书。您可以前往[" + sourcePage.url + " 源地址]查看版权声明。'''[[Category:WikiPorter搬运]]<br>" + wikiText;
             };
+            var filePorter = new FilePorter();
+            filePorter.wiki_text_mapping_func = this.default_wiki_text_mapping_func;
+            this.registerPorter(filePorter);
             var defaultPorter = new DefaultPorter();
             defaultPorter.wiki_text_mapping_func = this.default_wiki_text_mapping_func;
             this.registerPorter(defaultPorter);
@@ -542,6 +761,39 @@ var WikiPorter;
         return DefaultPorter;
     })();
     WikiPorter.DefaultPorter = DefaultPorter;
+    var FilePorter = (function (_super) {
+        __extends(FilePorter, _super);
+        function FilePorter() {
+            _super.apply(this, arguments);
+        }
+        FilePorter.prototype.canPort = function (sourcePage, targetPage) {
+            return _super.prototype.canPort.call(this, sourcePage, targetPage)
+                && sourcePage.isFilePage && targetPage.isFilePage;
+        };
+        FilePorter.prototype.port = function (sourcePage, targetPage) {
+            var _this = this;
+            var deferredResult = P.defer();
+            var sourceFilePage = sourcePage.asFilePage();
+            var targetFilePage = targetPage.asFilePage();
+            if (sourceFilePage == null || targetFilePage == null) {
+                // something went wrong...
+                return;
+            }
+            sourcePage.getWikiText().done(function (wikitext) {
+                sourceFilePage.getFileUrl().done(function (url) {
+                    targetPage.site.getCsrfToken().done(function (token) {
+                        if (_this.wiki_text_mapping_func != null) {
+                            wikitext = _this.wiki_text_mapping_func(wikitext, sourcePage, targetPage);
+                        }
+                        targetFilePage.upload(url, wikitext, token).done(function (_) { return deferredResult.resolve(_); }).fail(deferredResult.reject);
+                    }).fail(deferredResult.reject);
+                }).fail(deferredResult.reject);
+            }).fail(deferredResult.reject);
+            return deferredResult.promise();
+        };
+        return FilePorter;
+    })(DefaultPorter);
+    WikiPorter.FilePorter = FilePorter;
 })(WikiPorter || (WikiPorter = {}));
 /// <reference path="typings/jquery/jquery.d.ts"/>
 /// <reference path="wiki_porter.ts"/>
