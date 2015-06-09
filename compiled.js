@@ -321,6 +321,9 @@ var P;
     }
     P.isUndefined = isUndefined;
 })(P || (P = {}));
+function ab2str(buf) {
+    return String.fromCharCode.apply(null, new Uint8Array(buf));
+}
 function str2ab(str) {
     var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
     var bufView = new Uint16Array(buf);
@@ -328,6 +331,31 @@ function str2ab(str) {
         bufView[i] = str.charCodeAt(i);
     }
     return buf;
+}
+function uInt8Array2String(array) {
+    return String.fromCharCode.apply(null, array);
+}
+function uInt16Array2String(array) {
+    return String.fromCharCode.apply(null, array);
+}
+//if (!XMLHttpRequest.prototype.sendAsBinary) {
+//  XMLHttpRequest.prototype.sendAsBinary = function(sData) {
+//    var nBytes = sData.length, ui8Data = new Uint8Array(nBytes);
+//    for (var nIdx = 0; nIdx < nBytes; nIdx++) {
+//      ui8Data[nIdx] = sData.charCodeAt(nIdx) & 0xff;
+//    }
+//    /* send as ArrayBufferView...: */
+//    this.send(ui8Data);
+//    /* ...or as ArrayBuffer (legacy)...: this.send(ui8Data.buffer); */
+//  };
+//}
+function string2Uint8Array(str) {
+    var nBytes = str.length;
+    var ui8Data = new Uint8Array(nBytes);
+    for (var nIdx = 0; nIdx < nBytes; nIdx++) {
+        ui8Data[nIdx] = str.charCodeAt(nIdx) & 0xff;
+    }
+    return ui8Data;
 }
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -528,88 +556,64 @@ var Wiki;
             var _this = this;
             var deferredResult = P.defer();
             // upload by url is not supported by default, so download the image first...
-            $.ajax({
-                url: file_url,
-                success: function (params) {
-                    console.log(params);
-                    var requestUrl = _this.site.api_url + "?action=upload";
-                    console.log(requestUrl);
-                    var requestPara = {
-                        "filename": _this.file_name,
-                        //"comment": "port",
-                        "token": token
-                    };
-                    var boundary = "---------------------------8ce5ac3ab79ab2c"; // todo random
-                    //var boundary = '--nodemw' + Math.random().toString().substr(2);
-                    var pbb = new PostBodyBuilder(boundary);
-                    pbb.appendObject(requestPara);
-                    pbb.appendFile("file", _this.file_name, params);
-                    var postBody = pbb.toString();
-                    var contentType = "multipart/form-data; boundary=" + boundary;
-                    //					console.log(postBody);
-                    //					console.log(contentType);
-                    //					var xhr = new XMLHttpRequest();
-                    //					xhr.open("POST", requestUrl, true);
-                    //					xhr.setRequestHeader("Content-Type", contentType);
-                    //					xhr.onreadystatechange = () => {
-                    //						if (xhr.readyState === 4) {
-                    //							// 4 = "loaded"
-                    //							console.log(xhr);
-                    //							if (xhr.status === 200) {
-                    //								deferredResult.resolve(xhr);
-                    //							}
-                    //							else {
-                    //								deferredResult.reject({ message: xhr.statusText });
-                    //							}
-                    //						}
-                    //					};
-                    //					xhr.send(postBody);
-                    //console.log(postBody);
-                    $.ajax({
-                        url: requestUrl,
-                        type: "POST",
-                        data: postBody,
-                        contentType: contentType,
-                        processData: false,
-                        success: function (params1) {
-                            console.log(params1);
-                            deferredResult.resolve(params1);
-                        },
-                        error: function (e, msg) {
-                            console.log(e);
-                            console.log(msg);
-                            deferredResult.reject({ message: msg });
-                        }
-                    });
-                },
-                error: function (e, msg) {
-                    console.log(e);
-                    console.log(msg);
-                    deferredResult.reject({ message: msg });
+            // jQuery does not support XHR2 yet
+            var xhr = new XMLHttpRequest();
+            // Hack to pass bytes through unprocessed.
+            //xhr.overrideMimeType('text/plain; charset=UTF8');
+            xhr.responseType = "arraybuffer";
+            xhr.open("GET", file_url, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    // 4 = "loaded"
+                    if (xhr.status === 200) {
+                        //						var array = new Uint16Array(xhr.response);
+                        //						var file_content = uInt16Array2String(array);
+                        var file_content = xhr.response;
+                        console.log(file_content);
+                        var requestUrl = _this.site.api_url + "?action=upload";
+                        console.log(requestUrl);
+                        var requestPara = {
+                            "filename": _this.file_name,
+                            "comment": "port",
+                            "token": token,
+                            "text": wiki_text
+                        };
+                        var boundary = "---------------------------8ce5ac3ab79ab2c"; // todo random
+                        //var boundary = '--nodemw' + Math.random().toString().substr(2);
+                        var pbb = new PostBodyBuilder(boundary);
+                        pbb.appendObject(requestPara);
+                        pbb.appendFile("file", _this.file_name, file_content);
+                        var blob = pbb.toBlob();
+                        var fr = new FileReader();
+                        fr.readAsArrayBuffer(blob);
+                        fr.onload = function () {
+                            var postBody = fr.result;
+                            var contentType = "multipart/form-data; boundary=" + boundary;
+                            console.log(postBody);
+                            $.ajax({
+                                url: requestUrl,
+                                type: "POST",
+                                data: postBody,
+                                contentType: contentType,
+                                processData: false,
+                                success: function (params1) {
+                                    console.log(params1);
+                                    deferredResult.resolve(params1);
+                                },
+                                error: function (e, msg) {
+                                    console.log(e);
+                                    console.log(msg);
+                                    deferredResult.reject({ message: msg });
+                                }
+                            });
+                        };
+                    }
+                    else {
+                        deferredResult.reject({ message: xhr.statusText });
+                    }
                 }
-            });
-            //			var requestUrl = this.site.api_url + "?action=upload&url=" + file_url + "&filename=" + this.file_name + "&comment=port";
-            //			console.log(requestUrl);
-            //			console.log(this.file_name);
-            //			console.log(file_url);
-            //			$.ajax({
-            //				url: requestUrl,
-            //				data: {
-            //					//"filename": this.file_name,
-            //					//"url": file_url,
-            //					//"comment": "port",
-            //					"text": wiki_text,
-            //					"token": token
-            //				},
-            //				success: params => {
-            //					deferredResult.resolve(params);
-            //				},
-            //				error: (e, msg) => {
-            //					console.log(e);
-            //					console.log(msg);
-            //					deferredResult.reject({ message: msg });
-            //				}
-            //			})
+            };
+            xhr.send(null);
             return deferredResult.promise();
         };
         return WikiFilePage;
@@ -619,7 +623,7 @@ var Wiki;
         function PostBodyBuilder(boundary) {
             this.CRLF = "\r\n";
             this._boundaryPlus = "--" + boundary;
-            this._buffer = "";
+            this._arrayBuffers = new Array();
         }
         PostBodyBuilder.prototype.appendObject = function (obj) {
             for (var key in obj) {
@@ -630,26 +634,33 @@ var Wiki;
             return this;
         };
         PostBodyBuilder.prototype.appendString = function (key, value) {
-            this._buffer += this._boundaryPlus + this.CRLF;
-            this._buffer += "Content-Disposition: form-data; name=\"" + key + "\"" + this.CRLF;
-            this._buffer += "Content-Type: text/plain; charset=UTF-8" + this.CRLF;
-            this._buffer += "Content-Transfer-Encoding: 8bit" + this.CRLF;
-            this._buffer += this.CRLF;
-            this._buffer += value + this.CRLF;
+            var buffer = this._boundaryPlus + this.CRLF;
+            buffer += "Content-Disposition: form-data; name=\"" + key + "\"" + this.CRLF;
+            buffer += "Content-Type: text/plain; charset=UTF-8" + this.CRLF;
+            buffer += "Content-Transfer-Encoding: 8bit" + this.CRLF;
+            buffer += this.CRLF;
+            buffer += value + this.CRLF;
+            this._arrayBuffers.push(string2Uint8Array(buffer).buffer);
             return this;
         };
         PostBodyBuilder.prototype.appendFile = function (key, file_name, content) {
-            this._buffer += this._boundaryPlus + this.CRLF;
-            this._buffer += "Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + file_name + "\"" + this.CRLF;
-            this._buffer += "Content-Type: application/octet-stream; charset=UTF-8" + this.CRLF;
-            this._buffer += "Content-Transfer-Encoding: binary" + this.CRLF;
-            this._buffer += this.CRLF;
-            this._buffer += content + this.CRLF;
+            var buffer = this._boundaryPlus + this.CRLF;
+            buffer += "Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + file_name + "\"" + this.CRLF;
+            buffer += "Content-Type: application/octet-stream; charset=UTF-8" + this.CRLF;
+            buffer += "Content-Transfer-Encoding: binary" + this.CRLF;
+            buffer += this.CRLF;
+            this._arrayBuffers.push(string2Uint8Array(buffer).buffer);
+            this._arrayBuffers.push(content);
+            this._arrayBuffers.push(string2Uint8Array(this.CRLF).buffer);
             return this;
         };
-        PostBodyBuilder.prototype.toString = function () {
-            this._buffer += this._boundaryPlus + "--";
-            return this._buffer;
+        //		toString(): string {
+        //			this._buffer += this._boundaryPlus + "--";
+        //			return this._buffer;
+        //		}
+        PostBodyBuilder.prototype.toBlob = function () {
+            this._arrayBuffers.push(string2Uint8Array(this._boundaryPlus + "--").buffer);
+            return new Blob(this._arrayBuffers);
         };
         return PostBodyBuilder;
     })();

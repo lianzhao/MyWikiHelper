@@ -185,104 +185,79 @@ module Wiki {
 		upload(file_url: string, wiki_text: string, token: string): P.Promise<any> {
 			var deferredResult = P.defer<any>();
 			// upload by url is not supported by default, so download the image first...
-			$.ajax({
-				url: file_url,
-				success: params => {
-					console.log(params);
-					var requestUrl = this.site.api_url + "?action=upload";
-					console.log(requestUrl);
-					var requestPara = {
-						"filename": this.file_name,
-						//"comment": "port",
-						"token": token
-					}
-					var boundary = "---------------------------8ce5ac3ab79ab2c";// todo random
-					//var boundary = '--nodemw' + Math.random().toString().substr(2);
-					var pbb = new PostBodyBuilder(boundary);
-					pbb.appendObject(requestPara);
-					pbb.appendFile("file", this.file_name, params);
-					var postBody = pbb.toString();
-					var contentType = "multipart/form-data; boundary=" + boundary;
-
-//					console.log(postBody);
-//					console.log(contentType);
-//					var xhr = new XMLHttpRequest();
-//					xhr.open("POST", requestUrl, true);
-//					xhr.setRequestHeader("Content-Type", contentType);
-//					xhr.onreadystatechange = () => {
-//						if (xhr.readyState === 4) {
-//							// 4 = "loaded"
-//							console.log(xhr);
-//							if (xhr.status === 200) {
-//								deferredResult.resolve(xhr);
-//							}
-//							else {
-//								deferredResult.reject({ message: xhr.statusText });
-//							}
-//						}
-//					};
-//					xhr.send(postBody);
-
-					//console.log(postBody);
-					$.ajax({
-						url: requestUrl,
-						type: "POST",
-						data: postBody,
-						contentType: contentType,
-						processData: false,
-						success: params1 => {
-							console.log(params1);
-							deferredResult.resolve(params1);
-						},
-						error: (e, msg) => {
-							console.log(e);
-							console.log(msg);
-							deferredResult.reject({ message: msg });
+			// jQuery does not support XHR2 yet
+			var xhr = new XMLHttpRequest();
+			// Hack to pass bytes through unprocessed.
+			//xhr.overrideMimeType('text/plain; charset=UTF8');
+			xhr.responseType = "arraybuffer";
+			xhr.open("GET", file_url, true);
+			xhr.onreadystatechange = () => {
+				if (xhr.readyState === 4) {
+					// 4 = "loaded"
+					if (xhr.status === 200) {
+						//						var array = new Uint16Array(xhr.response);
+						//						var file_content = uInt16Array2String(array);
+						var file_content = xhr.response;
+						console.log(file_content);
+						var requestUrl = this.site.api_url + "?action=upload";
+						console.log(requestUrl);
+						var requestPara = {
+							"filename": this.file_name,
+							"comment": "port",
+							"token": token,
+							"text": wiki_text
 						}
-					})
-				},
-				error: (e, msg) => {
-					console.log(e);
-					console.log(msg);
-					deferredResult.reject({ message: msg });
+						var boundary = "---------------------------8ce5ac3ab79ab2c";// todo random
+						//var boundary = '--nodemw' + Math.random().toString().substr(2);
+						var pbb = new PostBodyBuilder(boundary);
+						pbb.appendObject(requestPara);
+						pbb.appendFile("file", this.file_name, file_content);
+						var blob = pbb.toBlob();
+						var fr = new FileReader();
+						fr.readAsArrayBuffer(blob);
+						fr.onload = () => {
+							var postBody = fr.result;
+							var contentType = "multipart/form-data; boundary=" + boundary;
+
+							console.log(postBody);
+
+							$.ajax({
+								url: requestUrl,
+								type: "POST",
+								data: postBody,
+								contentType: contentType,
+								processData: false,
+								success: params1 => {
+									console.log(params1);
+									deferredResult.resolve(params1);
+								},
+								error: (e, msg) => {
+									console.log(e);
+									console.log(msg);
+									deferredResult.reject({ message: msg });
+								}
+							})
+						}
+					}
+					else {
+						deferredResult.reject({ message: xhr.statusText });
+					}
 				}
-			})
-
-
-			//			var requestUrl = this.site.api_url + "?action=upload&url=" + file_url + "&filename=" + this.file_name + "&comment=port";
-			//			console.log(requestUrl);
-			//			console.log(this.file_name);
-			//			console.log(file_url);
-			//			$.ajax({
-			//				url: requestUrl,
-			//				data: {
-			//					//"filename": this.file_name,
-			//					//"url": file_url,
-			//					//"comment": "port",
-			//					"text": wiki_text,
-			//					"token": token
-			//				},
-			//				success: params => {
-			//					deferredResult.resolve(params);
-			//				},
-			//				error: (e, msg) => {
-			//					console.log(e);
-			//					console.log(msg);
-			//					deferredResult.reject({ message: msg });
-			//				}
-			//			})
+			}
+			xhr.send(null);
 			return deferredResult.promise();
 		}
 	}
 
 	class PostBodyBuilder {
 		private CRLF = "\r\n";
-		private _buffer: string;
+		//private _buffer: string;
+		private _arrayBuffers: Array<ArrayBuffer>;
 		private _boundaryPlus: string;
 
 		constructor(boundary: string) {
 			this._boundaryPlus = "--" + boundary;
-			this._buffer = "";
+			this._arrayBuffers = new Array<ArrayBuffer>();
 		}
 
 		appendObject(obj: any): PostBodyBuilder {
@@ -295,28 +270,36 @@ module Wiki {
 		}
 
 		appendString(key: string, value: string): PostBodyBuilder {
-			this._buffer += this._boundaryPlus + this.CRLF;
-			this._buffer += "Content-Disposition: form-data; name=\"" + key + "\"" + this.CRLF;
-			this._buffer += "Content-Type: text/plain; charset=UTF-8" + this.CRLF;
-			this._buffer += "Content-Transfer-Encoding: 8bit" + this.CRLF;
-			this._buffer += this.CRLF;
-			this._buffer += value + this.CRLF;
+			var buffer = this._boundaryPlus + this.CRLF;
+			buffer += "Content-Disposition: form-data; name=\"" + key + "\"" + this.CRLF;
+			buffer += "Content-Type: text/plain; charset=UTF-8" + this.CRLF;
+			buffer += "Content-Transfer-Encoding: 8bit" + this.CRLF;
+			buffer += this.CRLF;
+			buffer += value + this.CRLF;
+			this._arrayBuffers.push(string2Uint8Array(buffer).buffer);
 			return this;
 		}
 
-		appendFile(key: string, file_name: string, content: any): PostBodyBuilder {
-			this._buffer += this._boundaryPlus + this.CRLF;
-			this._buffer += "Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + file_name + "\"" + this.CRLF;
-			this._buffer += "Content-Type: application/octet-stream; charset=UTF-8" + this.CRLF;
-			this._buffer += "Content-Transfer-Encoding: binary" + this.CRLF;
-			this._buffer += this.CRLF;
-			this._buffer += content + this.CRLF;
+		appendFile(key: string, file_name: string, content: ArrayBuffer): PostBodyBuilder {
+			var buffer = this._boundaryPlus + this.CRLF;
+			buffer += "Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + file_name + "\"" + this.CRLF;
+			buffer += "Content-Type: application/octet-stream; charset=UTF-8" + this.CRLF;
+			buffer += "Content-Transfer-Encoding: binary" + this.CRLF;
+			buffer += this.CRLF;
+			this._arrayBuffers.push(string2Uint8Array(buffer).buffer);
+			this._arrayBuffers.push(content);
+			this._arrayBuffers.push(string2Uint8Array(this.CRLF).buffer);
 			return this;
 		}
 
-		toString(): string {
-			this._buffer += this._boundaryPlus + "--";
-			return this._buffer;
+		//		toString(): string {
+		//			this._buffer += this._boundaryPlus + "--";
+		//			return this._buffer;
+		//		}
+
+		toBlob(): Blob {
+			this._arrayBuffers.push(string2Uint8Array(this._boundaryPlus + "--").buffer);
+			return new Blob(this._arrayBuffers);
 		}
 	}
 }
