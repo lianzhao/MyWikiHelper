@@ -5,6 +5,7 @@
 	},
 	"files": [
 		"wiki.ts",
+		"wiki_sites.ts",
 		"wiki_porter.ts",
 		"popup.ts"
 	]
