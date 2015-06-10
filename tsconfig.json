@@ -4,6 +4,7 @@
 		"out": "compiled.js"
 	},
 	"files": [
+		"typings/encoding.ts",
 		"wiki.ts",
 		"wiki_porter.ts",
 		"popup.ts"
