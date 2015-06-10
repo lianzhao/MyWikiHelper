@@ -31,6 +31,14 @@ var WIKI_SITES = [
 		page_url: "http://commons.wikimedia.org/wiki/",
 		api_url: "http://commons.wikimedia.org/w/api.php",
 	},
+	{
+		name: "SakiWiki",
+		desc: "SakiWiki：《咲-Saki-》中文百科全书",
+		project_name: "SakiWiki",
+		url: "http://saki.cc",
+		page_url: "http://saki.cc/",
+		api_url: "http://saki.cc/api.php",
+	},
 	//		{
 	//			name: "Tolkein Gateway",
 	//			desc: "Tolkein Gateway",

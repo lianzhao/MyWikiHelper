@@ -19,7 +19,8 @@
     "http://*.huiji.wiki/",
     "http://*.wikia.com/",
     "http://commons.wikimedia.org/",
-    "http://www.tolkiengateway.net/"
+    "http://www.tolkiengateway.net/",
+    "http://saki.cc"
   ],
 
   "browser_action": {
