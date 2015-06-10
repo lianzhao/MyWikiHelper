@@ -21,7 +21,7 @@ Port wiki text to http://*.huiji.wiki
 See: https://github.com/lianzhao/MyWikiHelper/blob/master/wiki_sites.ts
 
 WIKI_SITES中的第一个将被当作目标维基网站
-如果希望添加源维基网站，或者想要修改目标维基网站，请自行修改代码。
+如果希望添加源维基网站，或者想要修改目标维基网站，请自行修改代码。参考https://github.com/lianzhao/MyWikiHelper/commit/bef95dca6b777eb57a7de09bdc9ad687dacbf06d
 
 ## 免责声明
 注意：使用本软件搬运维基页面属于个人行为，本软件不为因此产生的版权纠纷背书。
