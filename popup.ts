@@ -17,6 +17,18 @@ $(document).ready(() => {
   getCurrentTabUrl(url => {
     $("#navBtn").hide();
     WikiPorter.Config.init();
+    
+    //custom config
+    //port from Wikimedia Commons: http://commons.wikimedia.org/wiki/Main_Page
+    var commonsMediaWikiFilePorter = new WikiPorter.FilePorter();
+    commonsMediaWikiFilePorter.can_port_predicate = (source, target)=>{
+      return source.site.name === "Wikimedia Commons";
+    };
+    commonsMediaWikiFilePorter.wiki_text_mapping_func = (wikiText, source, target)=>{
+				return "'''这个文件来自[http://commons.wikimedia.org Wikimedia Commons]。您可以前往[" + source.url + " 源地址]查看版权声明。'''[[Category:Files from Wikimedia Commons]]<br>" + wikiText;
+    }
+    WikiPorter.Config.registerPorter(commonsMediaWikiFilePorter, 0);
+    
     var page = WikiPorter.Config.parsePage(url);
     if (page === null) {
       $("#msgText").text("Not a valid wiki page.");

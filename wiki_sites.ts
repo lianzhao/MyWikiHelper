@@ -23,6 +23,14 @@ var WIKI_SITES = [
 		page_url: "http://lotr.huiji.wiki/wiki/",
 		api_url: "http://lotr.huiji.wiki/api.php",
 	},
+	{
+		name: "Wikimedia Commons",
+		desc: "Wikimedia Commons",
+		project_name: "Commons",
+		url: "http://commons.wikimedia.org",
+		page_url: "http://commons.wikimedia.org/wiki/",
+		api_url: "http://commons.wikimedia.org/w/api.php",
+	},
 	//		{
 	//			name: "Tolkein Gateway",
 	//			desc: "Tolkein Gateway",
