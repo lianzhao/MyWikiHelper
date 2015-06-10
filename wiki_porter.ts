@@ -66,6 +66,11 @@ module WikiPorter {
 	export class DefaultPorter implements Porter {
 		wiki_text_mapping_func: WikiTextMappingFunc;
 		can_port_predicate: CanPortPredicate;
+		
+		constructor(){
+			this.wiki_text_mapping_func = null;
+			this.can_port_predicate = null;
+		}
 
 		canPort(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage): boolean {
 			return sourcePage.site !== targetPage.site && (this.can_port_predicate === null || this.can_port_predicate(sourcePage, targetPage));
@@ -75,7 +80,7 @@ module WikiPorter {
 			var deferredResult = P.defer<any>();
 			sourcePage.getWikiText().done(wikitext => {
 				targetPage.site.getCsrfToken().done(token=> {
-					if (this.wiki_text_mapping_func != null) {
+					if (this.wiki_text_mapping_func !== null) {
 						wikitext = this.wiki_text_mapping_func(wikitext, sourcePage, targetPage);
 					}
 					targetPage.edit(wikitext, token).done(_ => deferredResult.resolve(_)).fail(deferredResult.reject);
