@@ -1,6 +1,6 @@
 # MyWikiHelper
 It's a chrome extension.
-Port wiki text to http://*.huiji.wik
+Port wiki text to http://*.huiji.wiki
 
 ## Feature
 目前仅支持搬运至http://lotr.huiji.wiki
