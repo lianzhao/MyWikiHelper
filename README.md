@@ -18,7 +18,7 @@ Port wiki text to http://*.huiji.wiki
 详细方法请自行google
 
 ## Supported Wiki Sites
-See: https://github.com/lianzhao/MyWikiHelper/blob/master/wiki_sites.ts
+See: https://github.com/lianzhao/MyWikiHelper/blob/master/src/wiki_sites.ts
 
 WIKI_SITES中的第一个将被当作目标维基网站
 如果希望添加源维基网站，或者想要修改目标维基网站，请自行修改代码。参考https://github.com/lianzhao/MyWikiHelper/commit/bef95dca6b777eb57a7de09bdc9ad687dacbf06d
