@@ -1,3 +1,6 @@
+### New in 0.1.1 (Released 2015/6/10)
+* Support Commons Mediawiki
+
 ### New in 0.1 (Released 2015/6/10)
 * Reimplemented in Typescript
 * Support porting file
