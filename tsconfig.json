@@ -1,12 +1,12 @@
 {
 	"compilerOptions": {
 		"target": "ES5",
-		"out": "compiled.js"
+		"out": "src/compiled.js"
 	},
 	"files": [
-		"wiki.ts",
-		"wiki_sites.ts",
-		"wiki_porter.ts",
-		"popup.ts"
+		"src/wiki.ts",
+		"src/wiki_sites.ts",
+		"src/wiki_porter.ts",
+		"src/popup.ts"
 	]
 }
