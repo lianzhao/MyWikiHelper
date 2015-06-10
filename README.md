@@ -10,6 +10,7 @@ Port wiki text to http://*.huiji.wiki
 
 ## Install
 木有发布到chrome store因为木有钱。。。�😂。。。
+
 提供两种变通的安装方式：
 1. 以开发者模式从源代码安装
 2. 下载crx安装https://raw.githubusercontent.com/lianzhao/MyWikiHelper/master/dist/MyWikiHelper.crx
@@ -17,7 +18,7 @@ Port wiki text to http://*.huiji.wiki
 详细方法请自行google
 
 ## Supported Wiki Sites
-See: https://github.com/lianzhao/MyWikiHelper/blob/master/wiki_porter.ts#L4
+See: https://github.com/lianzhao/MyWikiHelper/blob/master/wiki_sites.ts
 
 WIKI_SITES中的第一个将被当作目标维基网站
 如果希望添加源维基网站，或者想要修改目标维基网站，请自行修改代码。
