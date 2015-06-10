@@ -1,5 +1,5 @@
 ### New in 0.1.1 (Released 2015/6/10)
-* Support Commons Mediawiki
+* Support Wikimedia Commons
 
 ### New in 0.1 (Released 2015/6/10)
 * Reimplemented in Typescript
