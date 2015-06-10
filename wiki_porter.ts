@@ -74,8 +74,12 @@ module WikiPorter {
 			this.registerPorter(defaultPorter);
 		}
 
-		static registerPorter(porter: Porter) {
-			this.wiki_porters.push(porter);
+		static registerPorter(porter: Porter, index = -1) {
+			if (index < 0) {
+				this.wiki_porters.push(porter);
+			} else {
+				this.wiki_porters.splice(index, 0, porter);
+			}
 		}
 
 		static getPorter(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage): Porter {
@@ -108,9 +112,10 @@ module WikiPorter {
 
 	export class DefaultPorter implements Porter {
 		wiki_text_mapping_func: WikiTextMappingFunc;
+		can_port_predicate: CanPortPredicate;
 
 		canPort(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage): boolean {
-			return sourcePage.site !== targetPage.site;
+			return sourcePage.site !== targetPage.site && (this.can_port_predicate === null || this.can_port_predicate(sourcePage, targetPage));
 		}
 
 		port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage): P.Promise<any> {
@@ -154,6 +159,10 @@ module WikiPorter {
 			}).fail(deferredResult.reject);
 			return deferredResult.promise();
 		}
+	}
+
+	export interface CanPortPredicate {
+		(sourcePage?: Wiki.WikiPage, targetPage?: Wiki.WikiPage): boolean;
 	}
 
 	export interface WikiTextMappingFunc {
