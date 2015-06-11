@@ -19,6 +19,12 @@ $(document).ready(() => {
     WikiPorter.Config.init();
     
     //custom config
+    //port from template manageer: http://templatemanager.huiji.wiki
+    var templateManagerPorter = new WikiPorter.DefaultPorter();
+    templateManagerPorter.can_port_predicate = (source, target)=>{
+      return source.site.name === "模版仓库";
+    };
+    
     //port from Wikimedia Commons: http://commons.wikimedia.org/wiki/Main_Page
     var commonsMediaWikiFilePorter = new WikiPorter.FilePorter();
     commonsMediaWikiFilePorter.can_port_predicate = (source, target)=>{
