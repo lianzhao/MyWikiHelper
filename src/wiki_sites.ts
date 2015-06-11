@@ -24,8 +24,8 @@ var WIKI_SITES = [
 		api_url: "http://lotr.huiji.wiki/api.php",
 	},
 	{
-		name: "模版仓库",
-		desc: "模版仓库",
+		name: "模板仓库",
+		desc: "模板仓库",
 		project_name: "模版仓库",
 		url: "http://templatemanager.huiji.wiki",
 		page_url: "http://templatemanager.huiji.wiki/wiki/",

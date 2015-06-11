@@ -22,7 +22,7 @@ $(document).ready(() => {
     //port from template manageer: http://templatemanager.huiji.wiki
     var templateManagerPorter = new WikiPorter.DefaultPorter();
     templateManagerPorter.can_port_predicate = (source, target)=>{
-      return source.site.name === "模版仓库";
+      return source.site.name === "模板仓库";
     };
     WikiPorter.Config.registerPorter(templateManagerPorter, 0);
     
