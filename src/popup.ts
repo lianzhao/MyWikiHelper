@@ -24,6 +24,7 @@ $(document).ready(() => {
     templateManagerPorter.can_port_predicate = (source, target)=>{
       return source.site.name === "模版仓库";
     };
+    WikiPorter.Config.registerPorter(templateManagerPorter, 0);
     
     //port from Wikimedia Commons: http://commons.wikimedia.org/wiki/Main_Page
     var commonsMediaWikiFilePorter = new WikiPorter.FilePorter();
