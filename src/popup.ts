@@ -29,6 +29,25 @@ $(document).ready(() => {
     }
     WikiPorter.Config.registerPorter(commonsMediaWikiFilePorter, 0);
     
+    //port from saki wiki: http://saki.cc
+    var sakiWikiPorter = new WikiPorter.DefaultPorter();
+    sakiWikiPorter.can_port_predicate = (source, target)=>{
+      return source.site.name === "SakiWiki";
+    }
+    sakiWikiPorter.wiki_text_mapping_func = (wikiText, source, target)=>{
+      if (wikiText.indexOf("#") === 0){
+        // SakiWiki的重定向存在问题：
+        // 当访问http://saki.cc/日本麻雀的规则
+        // 浏览器没有被重定向至http://saki.cc/日本麻将的规则
+        // 只是网页内容展现为“日本麻将的规则”
+        // 因此source.title依然是“日本麻雀的规则”，取得的wikitext为“#REDIRECT [[日本麻将的规则]]”
+        // 因此，此处不加入{{SakiWiki}}模版
+        return wikiText;
+      }
+				return "{{SakiWiki|" + source.title + "}}\r\n" + wikiText;
+    }
+    WikiPorter.Config.registerPorter(sakiWikiPorter, 0);
+    
     var page = WikiPorter.Config.parsePage(url);
     if (page === null) {
       $("#msgText").text("Not a valid wiki page.");
