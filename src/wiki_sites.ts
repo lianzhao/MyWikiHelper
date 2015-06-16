@@ -35,9 +35,9 @@ var WIKI_SITES = [
 		name: "Wikimedia Commons",
 		desc: "Wikimedia Commons",
 		project_name: "Commons",
-		url: "https://commons.wikimedia.org",
-		page_url: "https://commons.wikimedia.org/wiki/",
-		api_url: "https://commons.wikimedia.org/w/api.php",
+		url: "http://commons.wikimedia.org",
+		page_url: "http://commons.wikimedia.org/wiki/",
+		api_url: "http://commons.wikimedia.org/w/api.php",
 	},
 	{
 		name: "SakiWiki",
