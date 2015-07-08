@@ -1,5 +1,13 @@
 var WIKI_SITES = [
 	{
+		name: "红铜智库中文维基",
+		desc: "红铜智库中文维基",
+		project_name: "红铜智库中文维基",
+		url: "http://coppermind.huiji.wiki",
+		page_url: "http://coppermind.huiji.wiki/wiki/",
+		api_url: "http://coppermind.huiji.wiki/api.php",
+	},
+	{
 		name: "麻将维基",
 		desc: "麻将维基",
 		project_name: "麻将维基",
@@ -46,6 +54,14 @@ var WIKI_SITES = [
 		url: "http://saki.cc",
 		page_url: "http://saki.cc/",
 		api_url: "http://saki.cc/api.php",
+	},
+	{
+		name: "the Coppermind",
+		desc: "the Coppermind",
+		project_name: "Coppermind",
+		url: "http://coppermind.net",
+		page_url: "http://coppermind.net/wiki/",
+		api_url: "http://coppermind.net/w/api.php",
 	},
 	//		{
 	//			name: "Tolkein Gateway",

@@ -20,7 +20,8 @@
     "http://*.wikia.com/",
     "https://commons.wikimedia.org/",
     "http://www.tolkiengateway.net/",
-    "http://saki.cc/"
+    "http://saki.cc/",
+    "http://coppermind.net/"
   ],
 
   "browser_action": {
