@@ -55,6 +55,13 @@ $(document).ready(() => {
     }
     WikiPorter.Config.registerPorter(sakiWikiPorter, 0);
     
+    //port from http://coppermind.net to http://coppermind.huiji.wiki
+    var cmWikiPorter = new WikiPorter.DefaultPorter();
+    cmWikiPorter.can_port_predicate = (source, target)=>{
+      return source.site.name === "the Coppermind" && target.site.name === "红铜智库中文维基";
+    };
+    WikiPorter.Config.registerPorter(cmWikiPorter, 0);
+    
     var page = WikiPorter.Config.parsePage(url);
     if (page === null) {
       $("#msgText").text("Not a valid wiki page.");
