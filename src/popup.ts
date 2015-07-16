@@ -58,7 +58,7 @@ $(document).ready(() => {
     //port from http://coppermind.net to http://coppermind.huiji.wiki
     var cmWikiPorter = new WikiPorter.DefaultPorter();
     cmWikiPorter.can_port_predicate = (source, target)=>{
-      return source.site.name === "the Coppermind" && target.site.name === "红铜智库中文维基";
+      return source.site.name === "the Coppermind" && target.site.name === "红铜智库中文维基" && !source.isFilePage;
     };
     WikiPorter.Config.registerPorter(cmWikiPorter, 0);
     
