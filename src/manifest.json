@@ -21,7 +21,8 @@
     "https://commons.wikimedia.org/",
     "http://www.tolkiengateway.net/",
     "http://saki.cc/",
-    "http://coppermind.net/"
+    "http://coppermind.net/",
+    "http://heroes.thelazy.net/"
   ],
 
   "browser_action": {

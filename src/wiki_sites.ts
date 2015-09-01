@@ -1,5 +1,13 @@
 var WIKI_SITES = [
 	{
+		name: "魔法门之英雄无敌3",
+		desc: "魔法门之英雄无敌3",
+		project_name: "魔法门之英雄无敌3",
+		url: "http://hmm3.huiji.wiki",
+		page_url: "http://hmm3.huiji.wiki/wiki/",
+		api_url: "http://hmm3.huiji.wiki/api.php",
+	},
+	{
 		name: "红铜智库中文维基",
 		desc: "红铜智库中文维基",
 		project_name: "红铜智库中文维基",
@@ -62,6 +70,14 @@ var WIKI_SITES = [
 		url: "http://coppermind.net",
 		page_url: "http://coppermind.net/wiki/",
 		api_url: "http://coppermind.net/w/api.php",
+	},
+	{
+		name: "Heroes of Might and Magic III wiki",
+		desc: "Heroes of Might and Magic III wiki",
+		project_name: "Heroes of Might and Magic III wiki",
+		url: "http://heroes.thelazy.net",
+		page_url: "http://heroes.thelazy.net/wiki/",
+		api_url: "http://heroes.thelazy.net/wiki/api.php",
 	},
 	//		{
 	//			name: "Tolkein Gateway",
