@@ -1,19 +1,19 @@
 var WIKI_SITES = [
 	{
-		name: "魔法门之英雄无敌3",
-		desc: "魔法门之英雄无敌3",
-		project_name: "魔法门之英雄无敌3",
-		url: "http://hmm3.huiji.wiki",
-		page_url: "http://hmm3.huiji.wiki/wiki/",
-		api_url: "http://hmm3.huiji.wiki/api.php",
-	},
-	{
 		name: "红铜智库中文维基",
 		desc: "红铜智库中文维基",
 		project_name: "红铜智库中文维基",
 		url: "http://coppermind.huiji.wiki",
 		page_url: "http://coppermind.huiji.wiki/wiki/",
 		api_url: "http://coppermind.huiji.wiki/api.php",
+	},
+	{
+		name: "魔法门之英雄无敌3",
+		desc: "魔法门之英雄无敌3",
+		project_name: "魔法门之英雄无敌3",
+		url: "http://hmm3.huiji.wiki",
+		page_url: "http://hmm3.huiji.wiki/wiki/",
+		api_url: "http://hmm3.huiji.wiki/api.php",
 	},
 	{
 		name: "麻将维基",
@@ -78,6 +78,14 @@ var WIKI_SITES = [
 		url: "http://heroes.thelazy.net",
 		page_url: "http://heroes.thelazy.net/wiki/",
 		api_url: "http://heroes.thelazy.net/wiki/api.php",
+	},
+	{
+		name: "漫威电影宇宙资料站",
+		desc: "漫威电影宇宙资料站",
+		project_name: "漫威电影宇宙资料站",
+		url: "http://mcu.huiji.wiki",
+		page_url: "http://mcu.huiji.wiki/wiki/",
+		api_url: "http://mcu.huiji.wiki/api.php",
 	},
 	//		{
 	//			name: "Tolkein Gateway",
