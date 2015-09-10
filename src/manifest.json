@@ -22,7 +22,8 @@
     "http://www.tolkiengateway.net/",
     "http://saki.cc/",
     "http://coppermind.net/",
-    "http://heroes.thelazy.net/"
+    "http://heroes.thelazy.net/",
+    "http://*.wikia.nocookie.net/"
   ],
 
   "browser_action": {

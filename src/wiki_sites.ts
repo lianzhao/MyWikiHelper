@@ -1,5 +1,13 @@
 var WIKI_SITES = [
 	{
+		name: "小樱的封印之书",
+		desc: "小樱的封印之书",
+		project_name: "小樱的封印之书",
+		url: "http://cardcaptorsakura.huiji.wiki",
+		page_url: "http://cardcaptorsakura.huiji.wiki/wiki/",
+		api_url: "http://cardcaptorsakura.huiji.wiki/api.php",
+	},
+	{
 		name: "红铜智库中文维基",
 		desc: "红铜智库中文维基",
 		project_name: "红铜智库中文维基",
@@ -86,6 +94,14 @@ var WIKI_SITES = [
 		url: "http://mcu.huiji.wiki",
 		page_url: "http://mcu.huiji.wiki/wiki/",
 		api_url: "http://mcu.huiji.wiki/api.php",
+	},
+	{
+		name: "Cardcaptor Sakura Wiki",
+		desc: "Cardcaptor Sakura Wiki",
+		project_name: "Cardcaptor Sakura Wiki",
+		url: "http://ccs.wikia.com/",
+		page_url: "http://ccs.wikia.com/wiki/",
+		api_url: "http://ccs.wikia.com/api.php",
 	},
 	//		{
 	//			name: "Tolkein Gateway",
