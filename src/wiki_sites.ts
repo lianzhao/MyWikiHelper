@@ -1,19 +1,19 @@
 var WIKI_SITES = [
 	{
-		name: "小樱的封印之书",
-		desc: "小樱的封印之书",
-		project_name: "小樱的封印之书",
-		url: "http://cardcaptorsakura.huiji.wiki",
-		page_url: "http://cardcaptorsakura.huiji.wiki/wiki/",
-		api_url: "http://cardcaptorsakura.huiji.wiki/api.php",
-	},
-	{
 		name: "红铜智库中文维基",
 		desc: "红铜智库中文维基",
 		project_name: "红铜智库中文维基",
 		url: "http://coppermind.huiji.wiki",
 		page_url: "http://coppermind.huiji.wiki/wiki/",
 		api_url: "http://coppermind.huiji.wiki/api.php",
+	},
+	{
+		name: "小樱的封印之书",
+		desc: "小樱的封印之书",
+		project_name: "小樱的封印之书",
+		url: "http://cardcaptorsakura.huiji.wiki",
+		page_url: "http://cardcaptorsakura.huiji.wiki/wiki/",
+		api_url: "http://cardcaptorsakura.huiji.wiki/api.php",
 	},
 	{
 		name: "魔法门之英雄无敌3",
