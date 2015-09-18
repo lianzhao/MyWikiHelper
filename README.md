@@ -8,6 +8,9 @@ Port wiki text to another wiki site
 * 你在目标维基登录，且对目标页面有编辑权限
 * 目标页面不存在
 
+### File namespace
+本程序搬运位于[File命名空间](https://www.mediawiki.org/wiki/Help:Namespaces#File)下的页面时，会同时搬运图片本身。请注意图片的版权问题。
+
 ## Install
 木有发布到chrome store因为木有钱。。。
 
