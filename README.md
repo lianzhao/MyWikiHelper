@@ -24,6 +24,9 @@ See: https://github.com/lianzhao/MyWikiHelper/blob/master/src/wiki_sites.ts
 * 简单的增加对这个维基站点的支持，请参考[1](https://github.com/lianzhao/MyWikiHelper/commit/8726fba1db04074e8e8c7a9c316a0184a153bda8)和[2](https://github.com/lianzhao/MyWikiHelper/commit/759f38f4e679ed3dafb09ac175f5df0953e3eda7)
 * 进一步自定义搬运过程，请参考[这里](https://github.com/lianzhao/MyWikiHelper/commit/0aa08fd6842f3219e8b0e7f71a1d04d6856e5549)
 
+## Known issues
+对Module无效
+
 ## 免责声明
 注意：使用本软件搬运维基页面属于个人行为，本软件不为因此产生的版权纠纷背书。
 
