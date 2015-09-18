@@ -5,7 +5,7 @@ Port wiki text to another wiki site
 ## Feature
 搬运维基页面至其他维基
 前提：
-* 你在目标危机登录，且对目标页面有编辑权限
+* 你在目标维基登录，且对目标页面有编辑权限
 * 目标页面不存在
 
 ## Install
