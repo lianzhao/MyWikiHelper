@@ -4,7 +4,6 @@
 module WikiPorter {
 	export class Config {
 		static wiki_sites: Array<Wiki.WikiSite>;
-		static target_wiki_site: Wiki.WikiSite;
 		static wiki_porters: Array<Porter>;
 		static default_wiki_text_mapping_func: WikiTextMappingFunc;
 
@@ -14,7 +13,6 @@ module WikiPorter {
 				var site = new Wiki.WikiSite(json);
 				this.wiki_sites.push(site);
 			});
-			this.target_wiki_site = this.wiki_sites[0];//todo
 			this.wiki_porters = new Array<Porter>();
 			this.default_wiki_text_mapping_func = (wikiText, sourcePage) => {
 				return "'''这个页面由[https://github.com/lianzhao/MyWikiHelper Wiki Porter]自动搬运。搬运中产生的版权问题由搬运者自行解决，Wiki Porter不为此搬运行为背书。您可以前往[" + sourcePage.url + " 源地址]查看版权声明。'''[[Category:WikiPorter搬运]]<br>" + wikiText;
