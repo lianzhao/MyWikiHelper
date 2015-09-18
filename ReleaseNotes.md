@@ -1,3 +1,7 @@
+### New in 0.2 (Released 2015/9/18)
+* Add more wiki sites support
+* Add target site drop down
+
 ### New in 0.1.2 (Released 2015/6/11)
 * Support SakiWiki
 
