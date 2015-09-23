@@ -95,7 +95,7 @@ module Wiki {
 
 		getWikiText(): P.Promise<string> {
 			var deferredResult = P.defer<string>();
-			var requestUrl = this.site.api_url + "?action=query&prop=revisions&rvprop=content&format=json&titles=" + this.title;
+			var requestUrl = this.site.api_url + "?action=query&prop=revisions&rvprop=content&format=json&titles=" + encodeURIComponent(this.title);
 			console.log(requestUrl);
 			$.ajax({
 				url: requestUrl,
@@ -115,7 +115,7 @@ module Wiki {
 
 		edit(wiki_text: string, token: string): P.Promise<any> {
 			var deferredResult = P.defer<any>();
-			var requestUrl = this.site.api_url + "?action=edit&format=json&createonly&summary=port&title=" + this.title;
+			var requestUrl = this.site.api_url + "?action=edit&format=json&createonly&summary=port&title=" + encodeURIComponent(this.title);
 			$.ajax({
 				url: requestUrl,
 				type: "POST",
@@ -165,7 +165,7 @@ module Wiki {
 
 		getFileUrl(): P.Promise<string> {
 			var deferredResult = P.defer<string>();
-			var requestUrl = this.site.api_url + "?action=query&prop=imageinfo&iiprop=url&format=json&titles=" + this.title;
+			var requestUrl = this.site.api_url + "?action=query&prop=imageinfo&iiprop=url&format=json&titles=" + encodeURIComponent(this.title);
 			console.log(requestUrl);
 			$.ajax({
 				url: requestUrl,
