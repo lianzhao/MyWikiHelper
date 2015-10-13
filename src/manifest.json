@@ -14,8 +14,8 @@
   "permissions": [
     "tabs",
     "activeTab",
-    "http://*.wikipedia.com/",
-    "https://*.wikipedia.com/",
+    "http://*.wikipedia.org/",
+    "https://*.wikipedia.org/",
     "http://*.huiji.wiki/",
     "http://*.wikia.com/",
     "https://commons.wikimedia.org/",
