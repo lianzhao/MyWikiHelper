@@ -72,6 +72,14 @@ var WIKI_SITES = [
 		api_url: "https://en.wikipedia.org/w/api.php",
 	},
 	{
+		name: "ja.wikipedia",
+		desc: "Wikipedia",
+		project_name: "Wikipedia",
+		url: "https://ja.wikipedia.org",
+		page_url: "https://ja.wikipedia.org/wiki/",
+		api_url: "https://ja.wikipedia.org/w/api.php",
+	},
+	{
 		name: "SakiWiki",
 		desc: "SakiWiki：《咲-Saki-》中文百科全书",
 		project_name: "SakiWiki",
