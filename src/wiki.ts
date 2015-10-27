@@ -113,9 +113,12 @@ module Wiki {
 			return deferredResult.promise();
 		}
 
-		edit(wiki_text: string, token: string): P.Promise<any> {
+		edit(wiki_text: string, token: string, overwriteExist: boolean): P.Promise<any> {
 			var deferredResult = P.defer<any>();
-			var requestUrl = this.site.api_url + "?action=edit&format=json&createonly&summary=port&title=" + encodeURIComponent(this.title);
+			var requestUrl = this.site.api_url + "?action=edit&format=json&summary=port&title=" + encodeURIComponent(this.title);
+			if (overwriteExist !== true){
+				requestUrl += "&createonly";
+			}
 			$.ajax({
 				url: requestUrl,
 				type: "POST",

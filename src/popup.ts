@@ -100,13 +100,14 @@ $(document).ready(() => {
         // something went wrong...
         return;
       }
+      var overwriteExist = false;//todo
       $("#navBtn").click(function() {
         chrome.tabs.create({ url: targetPage.url });
       });
       $("#loadingImg").show();
       $("#portBtn").hide();
       $("#targetSiteDropDown").hide();
-      porter.port(page, targetPage).done(params => {
+      porter.port(page, targetPage, overwriteExist).done(params => {
         $("#msgText").text("Done!");
         $("#targetLink").text("See it");
         $("#msgText").show();

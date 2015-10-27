@@ -58,7 +58,7 @@ module WikiPorter {
 	export interface Porter {
 		canPort(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage): boolean;
 
-		port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage): P.Promise<any>;
+		port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage, overwriteExist: boolean): P.Promise<any>;
 	}
 
 	export class DefaultPorter implements Porter {
@@ -74,14 +74,14 @@ module WikiPorter {
 			return sourcePage.site !== targetPage.site && (this.can_port_predicate === null || this.can_port_predicate(sourcePage, targetPage));
 		}
 
-		port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage): P.Promise<any> {
+		port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage, overwriteExist: boolean): P.Promise<any> {
 			var deferredResult = P.defer<any>();
 			sourcePage.getWikiText().done(wikitext => {
 				targetPage.site.getCsrfToken().done(token=> {
 					if (this.wiki_text_mapping_func !== null) {
 						wikitext = this.wiki_text_mapping_func(wikitext, sourcePage, targetPage);
 					}
-					targetPage.edit(wikitext, token).done(_ => deferredResult.resolve(_)).fail(deferredResult.reject);
+					targetPage.edit(wikitext, token, overwriteExist).done(_ => deferredResult.resolve(_)).fail(deferredResult.reject);
 				}).fail(deferredResult.reject);
 			}).fail(deferredResult.reject);
 			return deferredResult.promise();
@@ -95,7 +95,7 @@ module WikiPorter {
 				&& sourcePage.isFilePage && targetPage.isFilePage;
 		}
 
-		port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage): P.Promise<any> {
+		port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage, overwriteExist: boolean): P.Promise<any> {
 			var deferredResult = P.defer<any>();
 			var sourceFilePage = sourcePage.asFilePage();
 			var targetFilePage = targetPage.asFilePage();
