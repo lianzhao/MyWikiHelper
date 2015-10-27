@@ -119,6 +119,14 @@ var WIKI_SITES = [
 		page_url: "http://ccs.wikia.com/wiki/",
 		api_url: "http://ccs.wikia.com/api.php",
 	},
+	{
+		name: "es CCS Wiki",
+		desc: "Sakura Card Captors Wiki",
+		project_name: "Sakura Card Captors Wiki",
+		url: "http://es.sakuracardcaptors.wikia.com/",
+		page_url: "http://es.sakuracardcaptors.wikia.com/wiki/",
+		api_url: "http://es.sakuracardcaptors.wikia.com/api.php",
+	},
 	//		{
 	//			name: "Tolkein Gateway",
 	//			desc: "Tolkein Gateway",
