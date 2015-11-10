@@ -112,6 +112,14 @@ var WIKI_SITES = [
 		api_url: "http://mcu.huiji.wiki/api.php",
 	},
 	{
+		name: "冰与火之歌中文维基",
+		desc: "冰与火之歌中文维基",
+		project_name: "冰与火之歌中文维基",
+		url: "http://asoiaf.huiji.wiki",
+		page_url: "http://asoiaf.huiji.wiki/wiki/",
+		api_url: "http://asoiaf.huiji.wiki/api.php",
+	},
+	{
 		name: "Cardcaptor Sakura Wiki",
 		desc: "Cardcaptor Sakura Wiki",
 		project_name: "Cardcaptor Sakura Wiki",
