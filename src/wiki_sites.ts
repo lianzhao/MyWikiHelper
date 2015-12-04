@@ -120,6 +120,14 @@ var WIKI_SITES = [
 		api_url: "http://asoiaf.huiji.wiki/api.php",
 	},
 	{
+		name: "圣斗士星矢中文资料站",
+		desc: "圣斗士星矢中文资料站",
+		project_name: "圣斗士星矢中文资料站",
+		url: "http://saintseiya.huiji.wiki",
+		page_url: "http://saintseiya.huiji.wiki/wiki/",
+		api_url: "http://saintseiya.huiji.wiki/api.php",
+	},
+	{
 		name: "Cardcaptor Sakura Wiki",
 		desc: "Cardcaptor Sakura Wiki",
 		project_name: "Cardcaptor Sakura Wiki",
