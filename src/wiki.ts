@@ -10,6 +10,7 @@ module Wiki {
 		url: string;
 		page_url: string;
 		api_url: string;
+		ns_dict: { [index: string]: string; };
 
 		constructor(json: any) {
 			this.name = json.name;
@@ -18,6 +19,10 @@ module Wiki {
 			this.url = json.url;
 			this.page_url = json.page_url;
 			this.api_url = json.api_url;
+			this.ns_dict = {}
+			this.ns_dict['文件'] = 'File';
+			this.ns_dict['Archivo'] = 'File';
+			this.ns_dict[this.project_name] = 'Project';
 		}
 
 		parsePage(source_url: string): WikiPage {
@@ -25,7 +30,6 @@ module Wiki {
 			if (index === 0) {
 				var encodedTitle = source_url.substr(this.page_url.length);
 				var title = decodeURIComponent(encodedTitle);
-				title = title.replace(this.project_name + ":", "Project:");
 				var page = new WikiPage(title, this);
 				return page;
 			}
@@ -57,15 +61,17 @@ module Wiki {
 		private _title_without_ns: string;
 
 		constructor(title: string, site: WikiSite) {
-			this._title = title;
 			this._site = site;
 			var index = title.indexOf(":");
 			if (index > 0) {
-				this._ns = title.substr(0, index);
+				var ns = title.substr(0, index);
+				this._ns = (ns in this._site.ns_dict) ? this._site.ns_dict[ns] : ns;
 				this._title_without_ns = title.substr(index + 1);
+				this._title = this._ns + ":" + this._title_without_ns;
 			}
 			else {
 				this._title_without_ns = title;
+				this._title = title;
 			}
 		}
 
@@ -116,7 +122,7 @@ module Wiki {
 		edit(wiki_text: string, token: string, overwriteExist: boolean): P.Promise<any> {
 			var deferredResult = P.defer<any>();
 			var requestUrl = this.site.api_url + "?action=edit&format=json&summary=port&title=" + encodeURIComponent(this.title);
-			if (overwriteExist !== true){
+			if (overwriteExist !== true) {
 				requestUrl += "&createonly";
 			}
 			$.ajax({
