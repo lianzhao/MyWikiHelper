@@ -136,6 +136,14 @@ var WIKI_SITES = [
 		api_url: "http://ccs.wikia.com/api.php",
 	},
 	{
+		name: "Seiyapedia",
+		desc: "Seiyapedia",
+		project_name: "Seiyapedia",
+		url: "http://saintseiya.wikia.com/",
+		page_url: "http://saintseiya.wikia.com/wiki/",
+		api_url: "http://saintseiya.wikia.com/api.php",
+	},
+	{
 		name: "es CCS Wiki",
 		desc: "Sakura Card Captors Wiki",
 		project_name: "Sakura Card Captors Wiki",
