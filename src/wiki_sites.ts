@@ -8,6 +8,14 @@ var WIKI_SITES = [
 		api_url: "http://coppermind.huiji.wiki/api.php",
 	},
 	{
+		name: "JoJo的奇妙冒险中文维基",
+		desc: "JoJo的奇妙冒险中文维基",
+		project_name: "JoJo的奇妙冒险中文维基",
+		url: "http://jojo.huiji.wiki",
+		page_url: "http://jojo.huiji.wiki/wiki/",
+		api_url: "http://jojo.huiji.wiki/api.php",
+	},
+	{
 		name: "小樱的封印之书",
 		desc: "小樱的封印之书",
 		project_name: "小樱的封印之书",
