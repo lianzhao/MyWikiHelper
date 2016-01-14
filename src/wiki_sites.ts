@@ -151,6 +151,14 @@ var WIKI_SITES = [
 		page_url: "http://es.sakuracardcaptors.wikia.com/wiki/",
 		api_url: "http://es.sakuracardcaptors.wikia.com/api.php",
 	},
+	{
+		name: "jojo Wiki",
+		desc: "JoJo's Bizarre Encyclopedia",
+		project_name: "JoJo's Bizarre Encyclopedia",
+		url: "http://jojo.wikia.com/",
+		page_url: "http://jojo.wikia.com/wiki/",
+		api_url: "http://jojo.wikia.com/api.php",
+	},
 	//		{
 	//			name: "Tolkein Gateway",
 	//			desc: "Tolkein Gateway",
