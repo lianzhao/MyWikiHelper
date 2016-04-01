@@ -61,7 +61,7 @@ module WikiPorter {
     export interface Porter {
         canPort(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage): boolean;
 
-        port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage, options: any): P.Promise<any>;
+        port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage, options: any): JQueryPromise<any>;
     }
 
     export class DefaultPorter implements Porter {
@@ -77,17 +77,17 @@ module WikiPorter {
             return sourcePage.site !== targetPage.site && (this.can_port_predicate === null || this.can_port_predicate(sourcePage, targetPage));
         }
 
-        port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage, options: any): P.Promise<any> {
-            var deferredResult = P.defer<any>();
-            sourcePage.getWikiText().done(wikitext => {
-                targetPage.site.getCsrfToken().done(token => {
-                    if (this.wiki_text_mapping_func !== null) {
-                        wikitext = this.wiki_text_mapping_func(wikitext, sourcePage, targetPage);
-                    }
-                    targetPage.edit(wikitext, token, options.overwriteExist).done(_ => deferredResult.resolve(_)).fail(deferredResult.reject);
-                }).fail(deferredResult.reject);
-            }).fail(deferredResult.reject);
-            return deferredResult.promise();
+        port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage, options: any): JQueryPromise<any> {
+            var d1 = sourcePage.getWikiText();
+            var d2 = targetPage.site.getCsrfToken();
+            return $.when(d1, d2).done((param1, param2) => {
+                var wikitext = param1;
+                var token = param2;
+                if (this.wiki_text_mapping_func !== null) {
+                    wikitext = this.wiki_text_mapping_func(wikitext, sourcePage, targetPage);
+                }
+                return targetPage.edit(wikitext, token, options.overwriteExist);
+            })
         }
     }
 
@@ -98,26 +98,25 @@ module WikiPorter {
                 && sourcePage.isFilePage && targetPage.isFilePage;
         }
 
-        port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage, options: any): P.Promise<any> {
-            var deferredResult = P.defer<any>();
+        port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage, options: any): JQueryPromise<any> {
             var sourceFilePage = sourcePage.asFilePage();
             var targetFilePage = targetPage.asFilePage();
             if (sourceFilePage == null || targetFilePage == null) {
                 // something went wrong...
-                deferredResult.reject(null);
+                var d = $.Deferred()
+                d.reject(null);
+                return d.promise();
             } else {
-                sourcePage.getWikiText().done(wikitext => {
-                    sourceFilePage.getFileUrl().done(url => {
-                        targetPage.site.getCsrfToken().done(token => {
-                            if (this.wiki_text_mapping_func != null) {
-                                wikitext = this.wiki_text_mapping_func(wikitext, sourcePage, targetPage);
-                            }
-                            targetFilePage.upload(url, wikitext, token).done(_ => deferredResult.resolve(_)).fail(deferredResult.reject);
-                        }).fail(deferredResult.reject);
-                    }).fail(deferredResult.reject);
-                }).fail(deferredResult.reject);
+                var d1 = sourcePage.getWikiText();
+                var d2 = sourceFilePage.getFileUrl();
+                var d3 = targetPage.site.getCsrfToken();
+                return $.when(d1, d2, d3).done((param1, param2, param3) => {
+                    var wikitext = param1;
+                    var url = param2;
+                    var token = param3;
+                    return targetFilePage.upload(url, wikitext, token);
+                });
             }
-            return deferredResult.promise();
         }
     }
 
@@ -128,22 +127,29 @@ module WikiPorter {
                 && sourcePage.isCategoryPage && targetPage.isCategoryPage;
         }
 
-        port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage, options: any): P.Promise<any> {
-            var deferredResult = P.defer<any>();
+        port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage, options: any): JQueryPromise<any> {
             var sourceCategoryPage = sourcePage.asCategoryPage();
             var targetCategoryPage = targetPage.asCategoryPage();
             if (sourceCategoryPage == null || targetCategoryPage == null) {
                 // something went wrong...
-                deferredResult.reject(null);
+                var d = $.Deferred()
+                d.reject(null);
+                return d.promise();
             } else {
                 // get pages to be porting
-                var pages = [];
-                $.each(options.portCategoryOptions, (i,e) => {
-                    var d = sourceCategoryPage.getMembers(e);
-                    pages = pages.concat(d.result)
+                var defers = $.map(options.portCategoryOptions, (e, i) => {
+                    return sourceCategoryPage.getMembers(e);
                 });
+                var pages = [];
+                $.when(defers).done(params => {
+                    $.each(params, (i, e) => {
+                        pages = pages.concat(e);
+                    })
+                });
+                var d = $.Deferred()
+                d.reject(null);
+                return d.promise();
             }
-            return deferredResult.promise();
         }
     }
 

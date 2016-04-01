@@ -90,7 +90,7 @@ $(document).ready(() => {
     $("#portBtn").show();
     $("#targetSiteDropDown").show();
     $("#loadingImg").hide();
-    $("#portBtn").click(() => {
+    $("#testBtn").click(() => {
       var targetSiteName = $("#targetSiteDropDown").find("option:selected").text();
       var targetSite = new Wiki.WikiSite(WIKI_SITES.filter((site,i) => site.name === targetSiteName)[0]);
       console.log(targetSite);
