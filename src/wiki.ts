@@ -23,6 +23,7 @@ module Wiki {
 			this.ns_dict['文件'] = 'File';
 			this.ns_dict['Archivo'] = 'File';
 			this.ns_dict[this.project_name] = 'Project';
+			this.ns_dict['分类'] = 'Category';
 		}
 
 		parsePage(source_url: string): WikiPage {
@@ -98,6 +99,10 @@ module Wiki {
 		get isFilePage(): boolean {
 			return this._ns === "File" || this._ns === "文件";//todo
 		}
+        
+        get isCategoryPage(): boolean {
+            return this._ns === "Category";
+        }
 
 		getWikiText(): P.Promise<string> {
 			var deferredResult = P.defer<string>();
@@ -145,6 +150,10 @@ module Wiki {
 		asFilePage(): WikiFilePage {
 			return this.isFilePage ? new WikiFilePage(this._title, this._site) : null;
 		}
+        
+        asCategoryPage(): WikiCategoryPage {
+            return this.isCategoryPage ? new WikiCategoryPage(this._title, this._site) : null;
+        }
 
 		protected getFirstChildInObject(obj) {
 			for (var key in obj) {
@@ -257,6 +266,33 @@ module Wiki {
 			return deferredResult.promise();
 		}
 	}
+    
+    export class WikiCategoryPage extends WikiPage {
+		constructor(title: string, site: WikiSite) {
+			super(title, site);
+		}
+        
+        getMembers(cmtype: string): P.Promise<string[]>{
+			var deferredResult = P.defer<string[]>();
+			var requestUrl = this.site.api_url + "?action=query&list=categorymembers&format=json&rawcontinue&cmtitle=" + encodeURIComponent(this.title) + "&cmtype=" + cmtype;
+            var rv = [];
+            console.log(requestUrl);
+			$.ajax({
+				url: requestUrl,
+				success: params => {
+					console.log(params);
+					var members = params.query.categorymembers;
+                    rv = rv.concat(members.map(member => {
+                        return member.title
+                    }));
+				},
+				error: (e, msg) => {
+					deferredResult.reject({ message: msg });
+				}
+			})
+            return deferredResult.promise();
+        }
+    }
 
 	class PostBodyBuilder {
 		private CRLF = "\r\n";

@@ -56,11 +56,11 @@ $(document).ready(() => {
     WikiPorter.Config.registerPorter(sakiWikiPorter, 0);
     
     //port from http://coppermind.net to http://coppermind.huiji.wiki
-    var cmWikiPorter = new WikiPorter.DefaultPorter();
-    cmWikiPorter.can_port_predicate = (source, target) => {
-      return source.site.name === "the Coppermind" && target.site.name === "红铜智库中文维基" && !source.isFilePage;
-    };
-    WikiPorter.Config.registerPorter(cmWikiPorter, 0);
+    // var cmWikiPorter = new WikiPorter.DefaultPorter();
+    // cmWikiPorter.can_port_predicate = (source, target) => {
+    //   return source.site.name === "the Coppermind" && target.site.name === "红铜智库中文维基" && !source.isFilePage;
+    // };
+    // WikiPorter.Config.registerPorter(cmWikiPorter, 0);
 
     var page = WikiPorter.Config.parsePage(url);
     if (page === null) {
@@ -100,14 +100,18 @@ $(document).ready(() => {
         // something went wrong...
         return;
       }
-      var overwriteExist = false;//todo
+      var options = {
+          overwriteExist: false,//todo
+          portCategoryOptions: $('input[name=portCategory]:checked').map((i, e) => $(e).val())
+      }
+      console.log(options);
       $("#navBtn").click(function() {
         chrome.tabs.create({ url: targetPage.url });
       });
       $("#loadingImg").show();
       $("#portBtn").hide();
       $("#targetSiteDropDown").hide();
-      porter.port(page, targetPage, overwriteExist).done(params => {
+      porter.port(page, targetPage, options).done(params => {
         $("#msgText").text("Done!");
         $("#targetLink").text("See it");
         $("#msgText").show();
