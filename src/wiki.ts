@@ -254,7 +254,7 @@ module Wiki {
                 cats.push(this.title);
                 catd.resolve(cats);
             } else {
-                this._getSubcats(this.title).done(param => {
+                this._getSubcats(this.title, []).done(param => {
                     var cats = [];
                     cats.push(this.title);
                     cats = cats.concat(param);
@@ -265,7 +265,7 @@ module Wiki {
                 var cats = param;
                 var done = [];
                 var options2 = $.grep(options, e => {
-                    return e !== "subcat";
+                    return e !== "subcat" && e !== "catpage";
                 });
                 var members = []
                 $.each(options2, (_, cmtype) => {
@@ -274,7 +274,10 @@ module Wiki {
                             members = members.concat(m);
                             done.push(cat + "_" + cmtype);
                             if (done.length === options2.length * cats.length){
-                                d.resolve(members);
+                                if (options.indexOf("catpage") >= 0){
+                                    members = members.concat(cats);
+                                }
+                                d.resolve($.unique(members));
                             }
                         });
                     })
@@ -283,16 +286,25 @@ module Wiki {
             return d.promise();
         }
 
-        _getSubcats(cat: string): JQueryPromise<string[]> {
+        _getSubcats(cat: string, subcats: string[]): JQueryPromise<string[]> {
             var deferedResult = $.Deferred();
-            var subcats = [];
             this._getMembers(cat, 'subcat', null).done(param => {
                 if (param.length <= 0) {
                     deferedResult.resolve(subcats);
                 } else {
-                    subcats = subcats.concat(param);
+                    //subcats = subcats.concat(param);
                     $.each(param, (i, e) => {
-                        this._getSubcats(e).done(param2 => {
+                        if (subcats.indexOf(e) >= 0){
+                            // in case of categories circle tree...
+                            // e.g. The following two categories include each other...
+                            // http://jojo.wikia.com/wiki/Category:Light_Novels_Characters
+                            // http://jojo.wikia.com/wiki/Category:Light_Novel_Stands
+                            return;
+                        }
+                        else {
+                            subcats.push(e);
+                        }
+                        this._getSubcats(e, subcats).done(param2 => {
                             subcats = subcats.concat(param2);
                             deferedResult.resolve(subcats);
                         })

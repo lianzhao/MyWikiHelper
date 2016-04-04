@@ -137,11 +137,14 @@ module WikiPorter {
                 return d.promise();
             } else {
                 // get pages to be porting
-                sourceCategoryPage.getMembers(options.portCategoryOptions).done(params=> {
+                sourceCategoryPage.getMembers(options.portCategoryOptions).done(params => {
                     var pages = params;
-                })
-                var defers = $.map(options.portCategoryOptions, (e, i) => {
-                    return sourceCategoryPage.getMembers(e);
+                    $.each(pages, (i, page) => {
+                        var sourcePage1 = new Wiki.WikiPage(page, sourcePage.site);
+                        var targetPage1 = new Wiki.WikiPage(page, targetPage.site);
+                        var porter = sourcePage1.isCategoryPage ? new DefaultPorter() : Config.getPorter(sourcePage1, targetPage1);
+                        porter.port(sourcePage1, targetPage1, options);
+                    })
                 });
                 var d = $.Deferred()
                 d.reject(null);
