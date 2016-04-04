@@ -102,7 +102,7 @@ $(document).ready(() => {
       }
       var options = {
           overwriteExist: false,//todo
-          portCategoryOptions: $('input[name=portCategory]:checked').map((i, e) => $(e).val())
+          portCategoryOptions: $('input[name=portCategory]:checked').map((i, e) => $(e).val()).toArray()
       }
       console.log(options);
       $("#navBtn").click(function() {

@@ -137,14 +137,11 @@ module WikiPorter {
                 return d.promise();
             } else {
                 // get pages to be porting
+                sourceCategoryPage.getMembers(options.portCategoryOptions).done(params=> {
+                    var pages = params;
+                })
                 var defers = $.map(options.portCategoryOptions, (e, i) => {
                     return sourceCategoryPage.getMembers(e);
-                });
-                var pages = [];
-                $.when(defers).done(params => {
-                    $.each(params, (i, e) => {
-                        pages = pages.concat(e);
-                    })
                 });
                 var d = $.Deferred()
                 d.reject(null);

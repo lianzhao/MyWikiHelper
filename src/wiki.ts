@@ -1,6 +1,5 @@
 
 /// <reference path="typings/jquery/jquery.d.ts"/>
-/// <reference path="typings/Promise.ts"/>
 /// <reference path="util.ts"/>
 module Wiki {
     export class WikiSite {
@@ -246,20 +245,91 @@ module Wiki {
             super(title, site);
         }
 
-        getMembers(cmtype: string): JQueryPromise<string[]> {
-            var requestUrl = this.site.api_url + "?action=query&list=categorymembers&format=json&rawcontinue&cmtitle=" + encodeURIComponent(this.title) + "&cmtype=" + cmtype;
-            var rv = [];
+        getMembers(options: string[]): JQueryPromise<string[]> {
+            var members = [];
+            var d = $.Deferred();
+            var catd = $.Deferred();
+            if (options.indexOf("subcat") < 0) {
+                var cats = [];
+                cats.push(this.title);
+                catd.resolve(cats);
+            } else {
+                this._getSubcats(this.title).done(param => {
+                    var cats = [];
+                    cats.push(this.title);
+                    cats = cats.concat(param);
+                    catd.resolve(cats);
+                })
+            }
+            catd.done(param => {
+                var cats = param;
+                var done = [];
+                var options2 = $.grep(options, e => {
+                    return e !== "subcat";
+                });
+                var members = []
+                $.each(options2, (_, cmtype) => {
+                    $.each(cats, (_, cat) => {
+                        this._getMembers(cat, cmtype, null).done(m => {
+                            members = members.concat(m);
+                            done.push(cat + "_" + cmtype);
+                            if (done.length === options2.length * cats.length){
+                                d.resolve(members);
+                            }
+                        });
+                    })
+                })
+            })
+            return d.promise();
+        }
+
+        _getSubcats(cat: string): JQueryPromise<string[]> {
+            var deferedResult = $.Deferred();
+            var subcats = [];
+            this._getMembers(cat, 'subcat', null).done(param => {
+                if (param.length <= 0) {
+                    deferedResult.resolve(subcats);
+                } else {
+                    subcats = subcats.concat(param);
+                    $.each(param, (i, e) => {
+                        this._getSubcats(e).done(param2 => {
+                            subcats = subcats.concat(param2);
+                            deferedResult.resolve(subcats);
+                        })
+                    })
+                }
+            });
+            return deferedResult.promise();
+        }
+
+        _getMembers(cmtitle: string, cmtype: string, cmcontinue: string): JQueryPromise<string[]> {
+            var deferedResult = $.Deferred();
+            var requestUrl = this.site.api_url + "?action=query&list=categorymembers&format=json&rawcontinue&cmlimit=max&cmtitle=" + encodeURIComponent(cmtitle) + "&cmtype=" + cmtype;
+            if (cmcontinue && cmcontinue.length) {
+                requestUrl += "&cmcontinue=" + cmcontinue;
+            }
             console.log(requestUrl);
-            return $.ajax({
+            var results = []
+            $.ajax({
                 url: requestUrl,
-            }).then(params => {
+            }).done(params => {
                 console.log(params);
                 var members = params.query.categorymembers;
-                rv = rv.concat(members.map(member => {
+                results = results.concat(members.map(member => {
                     return member.title
                 }));
-                return rv;
-            });
+                if (params["query-continue"]) {
+                    var cmcontinue = params["query-continue"].categorymembers.cmcontinue;
+                    var d = this._getMembers(cmtitle, cmtype, cmcontinue);
+                    d.done(param => {
+                        results = results.concat(param);
+                        deferedResult.resolve(results);
+                    }).fail(deferedResult.reject);
+                } else {
+                    deferedResult.resolve(results);
+                }
+            }).fail(deferedResult.reject);
+            return deferedResult.promise();
         }
     }
 
