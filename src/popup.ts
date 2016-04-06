@@ -107,6 +107,9 @@ $(document).ready(() => {
           overwriteExist: false,//todo
           portCategoryOptions: $('input[name=portCategory]:checked').map((i, e) => $(e).val()).toArray()
       }
+      if (page.isCategoryPage && options.portCategoryOptions.length <= 0){
+          return;
+      }
       console.log(options);
       $("#navBtn").click(function() {
         chrome.tabs.create({ url: targetPage.url });
