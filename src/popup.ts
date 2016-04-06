@@ -71,6 +71,9 @@ $(document).ready(() => {
       $("#loadingImg").hide();
       return;
     }
+    if (page.isCategoryPage){
+        $("#categoryconfig").show();
+    }
     console.log("source_page=" + page.url);
     console.log($("#portBtn"));
     console.log($("#targetSiteDropDown"));
@@ -90,7 +93,7 @@ $(document).ready(() => {
     $("#portBtn").show();
     $("#targetSiteDropDown").show();
     $("#loadingImg").hide();
-    $("#testBtn").click(() => {
+    $("#portBtn").click(() => {
       var targetSiteName = $("#targetSiteDropDown").find("option:selected").text();
       var targetSite = new Wiki.WikiSite(WIKI_SITES.filter((site,i) => site.name === targetSiteName)[0]);
       console.log(targetSite);
@@ -117,11 +120,13 @@ $(document).ready(() => {
         $("#msgText").show();
         $("#navBtn").show();
         $("#loadingImg").hide();
+        $("#categoryconfig").hide();
       }).fail(params => {
         console.log(params.message);
         $("#msgText").text("error, see log.");
         $("#msgText").show();
         $("#loadingImg").hide();
+        $("#categoryconfig").hide();
       })
     })
   })
