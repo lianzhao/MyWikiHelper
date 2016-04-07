@@ -99,24 +99,26 @@ module WikiPorter {
         }
 
         port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage, options: any): JQueryPromise<any> {
+            var d = $.Deferred()
             var sourceFilePage = sourcePage.asFilePage();
             var targetFilePage = targetPage.asFilePage();
             if (sourceFilePage == null || targetFilePage == null) {
                 // something went wrong...
-                var d = $.Deferred()
                 d.reject(null);
-                return d.promise();
             } else {
                 var d1 = sourcePage.getWikiText();
                 var d2 = sourceFilePage.getFileUrl();
                 var d3 = targetPage.site.getCsrfToken();
-                return $.when(d1, d2, d3).done((param1, param2, param3) => {
+                $.when(d1, d2, d3).done((param1, param2, param3) => {
                     var wikitext = param1;
                     var url = param2;
                     var token = param3;
-                    return targetFilePage.upload(url, wikitext, token);
+                    targetFilePage.upload(url, wikitext, token).done(uploaddoneparam => {
+                        d.resolve(uploaddoneparam);
+                    });
                 });
             }
+            return d.promise();
         }
     }
 
