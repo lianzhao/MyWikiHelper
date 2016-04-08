@@ -78,16 +78,20 @@ module WikiPorter {
         }
 
         port(sourcePage: Wiki.WikiPage, targetPage: Wiki.WikiPage, options: any): JQueryPromise<any> {
+            var d = $.Deferred();
             var d1 = sourcePage.getWikiText();
             var d2 = targetPage.site.getCsrfToken();
-            return $.when(d1, d2).done((param1, param2) => {
+            $.when(d1, d2).done((param1, param2) => {
                 var wikitext = param1;
                 var token = param2;
                 if (this.wiki_text_mapping_func !== null) {
                     wikitext = this.wiki_text_mapping_func(wikitext, sourcePage, targetPage);
                 }
-                return targetPage.edit(wikitext, token, options.overwriteExist);
+                targetPage.edit(wikitext, token, options.overwriteExist).done(editdoneparam =>{
+                    d.resolve(editdoneparam)
+                });
             })
+            return d.promise();
         }
     }
 
