@@ -72,7 +72,7 @@ $(document).ready(() => {
       return;
     }
     if (page.isCategoryPage){
-        $("#categoryconfig").show();
+        $("#categoryconfig").removeClass('hide');
     }
     console.log("source_page=" + page.url);
     console.log($("#portBtn"));
