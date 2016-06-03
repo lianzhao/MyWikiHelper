@@ -1,3 +1,6 @@
+### New in 0.3 (Released 2016/6/3)
+* Async wiki text mapping
+
 ### New in 0.2 (Released 2015/9/18)
 * Add more wiki sites support
 * Add target site drop down
