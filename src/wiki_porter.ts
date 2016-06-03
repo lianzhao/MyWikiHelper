@@ -15,7 +15,9 @@ module WikiPorter {
             });
             this.wiki_porters = new Array<Porter>();
             this.default_wiki_text_mapping_func = (wikiText, sourcePage) => {
-                return "'''这个页面由[https://github.com/lianzhao/MyWikiHelper Wiki Porter]自动搬运。搬运中产生的版权问题由搬运者自行解决，Wiki Porter不为此搬运行为背书。您可以前往[" + sourcePage.url + " 源地址]查看版权声明。'''[[Category:WikiPorter搬运]]<br>" + wikiText;
+                var d = $.Deferred();
+                d.resolve("'''这个页面由[https://github.com/lianzhao/MyWikiHelper Wiki Porter]自动搬运。搬运中产生的版权问题由搬运者自行解决，Wiki Porter不为此搬运行为背书。您可以前往[" + sourcePage.url + " 源地址]查看版权声明。'''[[Category:WikiPorter搬运]]<br>" + wikiText);
+                return d.promise();
             }
             var categoryPorter = new CategoryPorter();
             categoryPorter.wiki_text_mapping_func = this.default_wiki_text_mapping_func;
@@ -84,12 +86,18 @@ module WikiPorter {
             $.when(d1, d2).done((param1, param2) => {
                 var wikitext = param1;
                 var token = param2;
-                if (this.wiki_text_mapping_func !== null) {
-                    wikitext = this.wiki_text_mapping_func(wikitext, sourcePage, targetPage);
+                function port(portText) {
+                    targetPage.edit(portText, token, options.overwriteExist).done(editdoneparam => {
+                        d.resolve(editdoneparam)
+                    });
                 }
-                targetPage.edit(wikitext, token, options.overwriteExist).done(editdoneparam =>{
-                    d.resolve(editdoneparam)
-                });
+                if (this.wiki_text_mapping_func !== null) {
+                    this.wiki_text_mapping_func(wikitext, sourcePage, targetPage).done(mappedText => {
+                        port(mappedText);
+                    });
+                } else {
+                    port(wikitext);
+                }
             })
             return d.promise();
         }
@@ -164,6 +172,6 @@ module WikiPorter {
     }
 
     export interface WikiTextMappingFunc {
-        (wikiText: string, sourcePage?: Wiki.WikiPage, targetPage?: Wiki.WikiPage): string;
+        (wikiText: string, sourcePage?: Wiki.WikiPage, targetPage?: Wiki.WikiPage): JQueryPromise<string>;
     }
 }

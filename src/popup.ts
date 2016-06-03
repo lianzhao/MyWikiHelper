@@ -32,7 +32,9 @@ $(document).ready(() => {
       return source.site.name === "Wikimedia Commons";
     };
     commonsMediaWikiFilePorter.wiki_text_mapping_func = (wikiText, source, target) => {
-      return "'''这个文件来自[http://commons.wikimedia.org Wikimedia Commons]。您可以前往[" + source.url + " 源地址]查看版权声明。'''[[Category:Files from Wikimedia Commons]]<br>" + wikiText;
+      var d = $.Deferred()
+      d.resolve("'''这个文件来自[http://commons.wikimedia.org Wikimedia Commons]。您可以前往[" + source.url + " 源地址]查看版权声明。'''[[Category:Files from Wikimedia Commons]]<br>" + wikiText);
+      return d.promise();
     }
     WikiPorter.Config.registerPorter(commonsMediaWikiFilePorter, 0);
     
@@ -42,6 +44,7 @@ $(document).ready(() => {
       return source.site.name === "SakiWiki";
     }
     sakiWikiPorter.wiki_text_mapping_func = (wikiText, source, target) => {
+      var rv;
       if (wikiText.indexOf("#") === 0) {
         // SakiWiki的重定向存在问题：
         // 当访问http://saki.cc/日本麻雀的规则
@@ -49,18 +52,36 @@ $(document).ready(() => {
         // 只是网页内容展现为“日本麻将的规则”
         // 因此source.title依然是“日本麻雀的规则”，取得的wikitext为“#REDIRECT [[日本麻将的规则]]”
         // 因此，此处不加入{{SakiWiki}}模版
-        return wikiText;
+        rv = wikiText;
+      } else {
+        rv = "{{SakiWiki|" + source.title + "}}\r\n" + wikiText;
       }
-      return "{{SakiWiki|" + source.title + "}}\r\n" + wikiText;
+      var d = $.Deferred();
+      d.resolve(rv);
+      return d.promise();
     }
     WikiPorter.Config.registerPorter(sakiWikiPorter, 0);
     
-    //port from http://coppermind.net to http://coppermind.huiji.wiki
-    // var cmWikiPorter = new WikiPorter.DefaultPorter();
-    // cmWikiPorter.can_port_predicate = (source, target) => {
-    //   return source.site.name === "the Coppermind" && target.site.name === "红铜智库中文维基" && !source.isFilePage;
-    // };
-    // WikiPorter.Config.registerPorter(cmWikiPorter, 0);
+    //port from http://coppermind.net
+    var cmWikiPorter = new WikiPorter.DefaultPorter();
+    cmWikiPorter.can_port_predicate = (source, target) => {
+      return source.site.name === "the Coppermind" && target.site.name === "红铜智库中文维基" && !source.isFilePage  && !source.isCategoryPage;
+    };
+    cmWikiPorter.wiki_text_mapping_func = (wikiText, source, target) =>{
+      var d = $.Deferred();
+      source.getProps(['revisions']).done(pageNode =>{
+        var text = "{{需要翻译}}\r\n{{CmPermission}}\r\n" + wikiText;
+        var revid = pageNode.revisions[0].revid
+        if (revid){
+          text = text + "\r\n{{ensync|" + revid + "}}"
+        }
+        d.resolve(text)
+      }).fail(err => {
+        d.reject(err);
+      })
+      return d.promise();
+    }
+    WikiPorter.Config.registerPorter(cmWikiPorter, 0);
 
     var page = WikiPorter.Config.parsePage(url);
     if (page === null) {

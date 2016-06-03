@@ -110,6 +110,20 @@ module Wiki {
                 return wikitext;
             });
         }
+        
+        getProps(props: string[]): JQueryPromise<any> {
+            var prop = props.join("|");
+            var requestUrl = this.site.api_url + "?action=query&format=json&titles=" + encodeURIComponent(this.title) + "&prop=" + prop;
+            console.log(requestUrl);
+            return $.ajax({
+                url: requestUrl,
+            }).then(params => {
+                var pagesNode = params.query.pages;
+                var pageNode = this.getFirstChildInObject(pagesNode);
+                console.log(pageNode);
+                return pageNode;
+            });
+        }
 
         edit(wiki_text: string, token: string, overwriteExist: boolean): JQueryPromise<any> {
             var requestUrl = this.site.api_url + "?action=edit&format=json&summary=port&title=" + encodeURIComponent(this.title);
