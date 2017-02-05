@@ -8,6 +8,14 @@ var WIKI_SITES = [
 		api_url: "http://coppermind.huiji.wiki/api.php",
 	},
 	{
+		name: "白箱中文维基",
+		desc: "白箱中文维基",
+		project_name: "白箱中文维基",
+		url: "http://shirobako.huiji.wiki",
+		page_url: "http://shirobako.huiji.wiki/wiki/",
+		api_url: "http://shirobako.huiji.wiki/api.php",
+	},
+	{
 		name: "JoJo的奇妙冒险中文维基",
 		desc: "JoJo的奇妙冒险中文维基",
 		project_name: "JoJo的奇妙冒险中文维基",
@@ -166,6 +174,14 @@ var WIKI_SITES = [
 		url: "http://jojo.wikia.com/",
 		page_url: "http://jojo.wikia.com/wiki/",
 		api_url: "http://jojo.wikia.com/api.php",
+	},
+	{
+		name: "ja shirobako Wiki",
+		desc: "ja shirobako Wiki",
+		project_name: "SHIROBAKO Wiki",
+		url: "http://ja.shirobako.wikia.com/",
+		page_url: "http://ja.shirobako.wikia.com/wiki/",
+		api_url: "http://ja.shirobako.wikia.com/api.php",
 	},
 	//		{
 	//			name: "Tolkein Gateway",
