@@ -110,7 +110,7 @@ module Wiki {
                 return wikitext;
             });
         }
-        
+
         getProps(props: string[]): JQueryPromise<any> {
             var prop = props.join("|");
             var requestUrl = this.site.api_url + "?action=query&format=json&titles=" + encodeURIComponent(this.title) + "&prop=" + prop;
@@ -135,6 +135,24 @@ module Wiki {
                 type: "POST",
                 data: {
                     "text": wiki_text,
+                    "token": token
+                },
+            });
+        }
+
+        move(to: string, token: string, reason: string): JQueryPromise<any> {
+            var requestUrl = this.site.api_url + "?action=move&format=json&from=" + encodeURIComponent(this.title) + "&to=" + encodeURIComponent(to);
+            if (reason) {
+                requestUrl += "&reason=" + reason;
+            }
+            requestUrl += "&movetalk=true";
+            requestUrl += "&movesubpages=true";
+            requestUrl += "&watchlist=watch";
+            requestUrl += "&ignorewarnings=true";
+            return $.ajax({
+                url: requestUrl,
+                type: "POST",
+                data: {
                     "token": token
                 },
             });
@@ -287,8 +305,8 @@ module Wiki {
                         this._getMembers(cat, cmtype, null).done(m => {
                             members = members.concat(m);
                             done.push(cat + "_" + cmtype);
-                            if (done.length === options2.length * cats.length){
-                                if (options.indexOf("catpage") >= 0){
+                            if (done.length === options2.length * cats.length) {
+                                if (options.indexOf("catpage") >= 0) {
                                     members = members.concat(cats);
                                 }
                                 d.resolve($.unique(members));
@@ -308,7 +326,7 @@ module Wiki {
                 } else {
                     //subcats = subcats.concat(param);
                     $.each(param, (i, e) => {
-                        if (subcats.indexOf(e) >= 0){
+                        if (subcats.indexOf(e) >= 0) {
                             // in case of categories circle tree...
                             // e.g. The following two categories include each other...
                             // http://jojo.wikia.com/wiki/Category:Light_Novels_Characters

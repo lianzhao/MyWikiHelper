@@ -6,7 +6,7 @@ function getCurrentTabUrl(callback) {
     active: true,
     currentWindow: true
   };
-  chrome.tabs.query(queryInfo, function(tabs) {
+  chrome.tabs.query(queryInfo, function (tabs) {
     var tab = tabs[0];
     var url = tab.url;
     callback(url);
@@ -17,7 +17,7 @@ $(document).ready(() => {
   getCurrentTabUrl(url => {
     $("#navBtn").hide();
     WikiPorter.Config.init();
-    
+
     //custom config
     //port from template manageer: http://templatemanager.huiji.wiki
     var templateManagerPorter = new WikiPorter.DefaultPorter();
@@ -25,7 +25,7 @@ $(document).ready(() => {
       return source.site.name === "模板仓库";
     };
     WikiPorter.Config.registerPorter(templateManagerPorter, 0);
-    
+
     //port from Wikimedia Commons: http://commons.wikimedia.org/wiki/Main_Page
     var commonsMediaWikiFilePorter = new WikiPorter.FilePorter();
     commonsMediaWikiFilePorter.can_port_predicate = (source, target) => {
@@ -37,7 +37,7 @@ $(document).ready(() => {
       return d.promise();
     }
     WikiPorter.Config.registerPorter(commonsMediaWikiFilePorter, 0);
-    
+
     //port from saki wiki: http://saki.cc
     var sakiWikiPorter = new WikiPorter.DefaultPorter();
     sakiWikiPorter.can_port_predicate = (source, target) => {
@@ -61,19 +61,22 @@ $(document).ready(() => {
       return d.promise();
     }
     WikiPorter.Config.registerPorter(sakiWikiPorter, 0);
-    
+
     //port from http://coppermind.net
     var cmWikiPorter = new WikiPorter.DefaultPorter();
     cmWikiPorter.can_port_predicate = (source, target) => {
-      return source.site.name === "the Coppermind" && target.site.name === "红铜智库中文维基" && !source.isFilePage  && !source.isCategoryPage;
+      return source.site.name === "the Coppermind" && target.site.name === "红铜智库中文维基" && !source.isFilePage && !source.isCategoryPage;
     };
-    cmWikiPorter.wiki_text_mapping_func = (wikiText, source, target) =>{
+    cmWikiPorter.wiki_text_mapping_func = (wikiText, source, target, options) => {
       var d = $.Deferred();
-      source.getProps(['revisions']).done(pageNode =>{
+      source.getProps(['revisions']).done(pageNode => {
         var text = "{{需要翻译}}\r\n{{CmPermission}}\r\n" + wikiText;
         var revid = pageNode.revisions[0].revid
-        if (revid){
+        if (revid) {
           text = text + "\r\n{{ensync|" + revid + "}}"
+        }
+        if (options.moveTo) {
+          text = text.replace("'''" + source.title + "'''", "'''" + options.moveTo + "'''{{en|" + source.title + "}}");
         }
         d.resolve(text)
       }).fail(err => {
@@ -89,11 +92,12 @@ $(document).ready(() => {
       $("#msgText").text("Not a valid wiki page.");
       $("#portBtn").hide();
       $("#targetSiteDropDown").hide();
+      $("#moveto-container").hide();
       $("#loadingImg").hide();
       return;
     }
-    if (page.isCategoryPage){
-        $("#categoryconfig").removeClass('hide');
+    if (page.isCategoryPage) {
+      $("#categoryconfig").removeClass('hide');
     }
     console.log("source_page=" + page.url);
     console.log($("#portBtn"));
@@ -113,31 +117,34 @@ $(document).ready(() => {
     $("#msgText").text();
     $("#portBtn").show();
     $("#targetSiteDropDown").show();
+    $("#moveto-container").show();
     $("#loadingImg").hide();
     $("#portBtn").click(() => {
       var targetSiteName = $("#targetSiteDropDown").find("option:selected").text();
-      var targetSite = new Wiki.WikiSite(WIKI_SITES.filter((site,i) => site.name === targetSiteName)[0]);
+      var targetSite = new Wiki.WikiSite(WIKI_SITES.filter((site, i) => site.name === targetSiteName)[0]);
       console.log(targetSite);
-      var targetPage = new Wiki.WikiPage(page.title, targetSite);//todo support differet name
+      var targetPage = new Wiki.WikiPage(page.title, targetSite);
       var porter = WikiPorter.Config.getPorter(page, targetPage);
       if (porter === null) {
         // something went wrong...
         return;
       }
       var options = {
-          overwriteExist: false,//todo
-          portCategoryOptions: $('input[name=portCategory]:checked').map((i, e) => $(e).val()).toArray()
+        overwriteExist: false,//todo
+        portCategoryOptions: $('input[name=portCategory]:checked').map((i, e) => $(e).val()).toArray(),
+        moveTo: $('input[name=moveto]').val()
       }
-      if (page.isCategoryPage && options.portCategoryOptions.length <= 0){
-          return;
+      if (page.isCategoryPage && options.portCategoryOptions.length <= 0) {
+        return;
       }
       console.log(options);
-      $("#navBtn").click(function() {
+      $("#navBtn").click(function () {
         chrome.tabs.create({ url: targetPage.url });
       });
       $("#loadingImg").show();
       $("#portBtn").hide();
       $("#targetSiteDropDown").hide();
+      $("#moveto-container").hide();
       porter.port(page, targetPage, options).done(params => {
         $("#msgText").text("Done!");
         $("#targetLink").text("See it");

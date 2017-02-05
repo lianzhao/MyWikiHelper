@@ -88,11 +88,17 @@ module WikiPorter {
                 var token = param2;
                 function port(portText) {
                     targetPage.edit(portText, token, options.overwriteExist).done(editdoneparam => {
-                        d.resolve(editdoneparam)
+                        if (!options.moveTo) {
+                            d.resolve(editdoneparam);
+                            return;
+                        }
+                        targetPage.move(options.moveTo, token, "move").done(movedoneparam => {
+                            d.resolve(movedoneparam);
+                        });
                     });
                 }
                 if (this.wiki_text_mapping_func !== null) {
-                    this.wiki_text_mapping_func(wikitext, sourcePage, targetPage).done(mappedText => {
+                    this.wiki_text_mapping_func(wikitext, sourcePage, targetPage, options).done(mappedText => {
                         port(mappedText);
                     });
                 } else {
@@ -172,6 +178,6 @@ module WikiPorter {
     }
 
     export interface WikiTextMappingFunc {
-        (wikiText: string, sourcePage?: Wiki.WikiPage, targetPage?: Wiki.WikiPage): JQueryPromise<string>;
+        (wikiText: string, sourcePage?: Wiki.WikiPage, targetPage?: Wiki.WikiPage, options?: any): JQueryPromise<string>;
     }
 }
