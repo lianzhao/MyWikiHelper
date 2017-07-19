@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "Wiki Porter",
-  "description": "Port wiki text to http://xxx.huiji.wiki 注意：使用本软件搬运维基页面属于个人行为，本软件不为因此产生的版权纠纷背书。",
+  "description": "Port wiki text to http://xxx.huijiwiki.com 注意：使用本软件搬运维基页面属于个人行为，本软件不为因此产生的版权纠纷背书。",
   "version": "0.4",
   "author": "lianzhao",
   "homepage_url": "https://github.com/lianzhao/MyWikiHelper",
@@ -16,7 +16,7 @@
     "activeTab",
     "http://*.wikipedia.org/",
     "https://*.wikipedia.org/",
-    "http://*.huiji.wiki/",
+    "http://*.huijiwiki.com/",
     "http://*.wikia.com/",
     "https://commons.wikimedia.org/",
     "http://www.tolkiengateway.net/",
