@@ -16,7 +16,7 @@ Port wiki text to another wiki site
 
 提供两种变通的安装方式：
 1. 以开发者模式从源代码安装
-2. 下载crx安装https://raw.githubusercontent.com/lianzhao/MyWikiHelper/master/dist/MyWikiHelper.crx
+2. 下载crx安装https://github.com/lianzhao/MyWikiHelper/releases
 
 详细方法请自行google，目前*也许*有效的一个办法是打开chrome://extensions/ 然后把crx拖进去。
 
