@@ -1,6 +1,5 @@
-### New in 0.4 (Released 2017/2/5)
-* New feature: move to
-* Add more wiki sites support
+### New in 0.4.1 (Released 2017/7/19)
+* Update huiji domain from huiji.wiki to [huijiwiki.com](http://www.huijiwiki.com)
 
 ### New in 0.3 (Released 2016/6/3)
 * Async wiki text mapping
