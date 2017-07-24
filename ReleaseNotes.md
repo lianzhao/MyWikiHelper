@@ -1,3 +1,6 @@
+### New in 0.4.2 (Released 2017/7/24)
+* HTTPS support for [coppermind](https://coppermind.net/)
+
 ### New in 0.4.1 (Released 2017/7/19)
 * Update huiji domain from huiji.wiki to [huijiwiki.com](http://www.huijiwiki.com)
 

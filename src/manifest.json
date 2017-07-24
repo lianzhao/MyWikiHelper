@@ -3,7 +3,7 @@
 
   "name": "Wiki Porter",
   "description": "Port wiki text to http://xxx.huijiwiki.com 注意：使用本软件搬运维基页面属于个人行为，本软件不为因此产生的版权纠纷背书。",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "author": "lianzhao",
   "homepage_url": "https://github.com/lianzhao/MyWikiHelper",
   
@@ -21,7 +21,7 @@
     "https://commons.wikimedia.org/",
     "http://www.tolkiengateway.net/",
     "http://saki.cc/",
-    "http://coppermind.net/",
+    "https://coppermind.net/",
     "http://heroes.thelazy.net/",
     "http://*.wikia.nocookie.net/"
   ],
