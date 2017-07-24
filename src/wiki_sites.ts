@@ -107,9 +107,9 @@ var WIKI_SITES = [
 		name: "the Coppermind",
 		desc: "the Coppermind",
 		project_name: "Coppermind",
-		url: "http://coppermind.net",
-		page_url: "http://coppermind.net/wiki/",
-		api_url: "http://coppermind.net/w/api.php",
+		url: "https://coppermind.net",
+		page_url: "https://coppermind.net/wiki/",
+		api_url: "https://coppermind.net/w/api.php",
 	},
 	{
 		name: "Heroes of Might and Magic III wiki",
