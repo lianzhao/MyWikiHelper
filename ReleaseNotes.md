@@ -1,3 +1,6 @@
+### New in 0.4.2.1 (Released 2019/5/17)
+* Re-packed in [CRX3 format](http://chromium.2324630.n4.nabble.com/crx-CRX3-Announcement-td30991.html)
+
 ### New in 0.4.2 (Released 2017/7/24)
 * HTTPS support for [coppermind](https://coppermind.net/)
 
